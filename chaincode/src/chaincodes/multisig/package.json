@@ -17,17 +17,17 @@
         "fabric-shim": "git+https://github.com/daanporon/fabric-shim.git"
     },
     "hf-language": "node",
-    "hf-dev-channel": "defaultchannel",
+    "hf-dev-channel": "kumachannel",
     "hf-network": [
         {
-            "channelId": "defaultchannel",
+            "channelId": "kumachannel",
             "instantiateArgs": [],
-            "endorsementPolicy": "OR('Org1-MSP.member')",
+            "endorsementPolicy": "OR('Kunstmaan-MSP.member')",
             "peers": [
-                "peer.org1.example.be"
+                "kumapeer.kunstmaan.be"
             ],
             "orderer": {
-                "host": "orderer.org1.example.be",
+                "host": "orderer.kunstmaan.be",
                 "port": 7050
             }
         }
