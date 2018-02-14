@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-let fs = require('fs');
+const fs = require('fs');
 let argv = require('yargs');
 
 argv = argv.usage('Usage: $0 <command> [options]');
