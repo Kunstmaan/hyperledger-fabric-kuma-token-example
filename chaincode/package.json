@@ -18,7 +18,7 @@
     "license": "MIT",
     "devDependencies": {
         "jest": "^22.3.0",
-        "@kunstmaan/hyperledger-fabric-chaincode-dev-setup": "^0.3.2",
+        "@kunstmaan/hyperledger-fabric-chaincode-dev-setup": "^0.4.0",
         "eslint": "^4.12.1",
         "eslint-config-airbnb-base": "^12.1.0",
         "eslint-plugin-import": "^2.8.0",
@@ -31,6 +31,8 @@
         ],
         "sourcePath": "./src",
         "buildPath": "./build",
-        "testPath": "./test"
+        "testPath": "./test",
+        "dockerFile": "./../network/generated/devmode/docker-compose-simple.yaml",
+        "chaincodeDestination": "./../network/generated/devmode/chaincode"
     }
 }
