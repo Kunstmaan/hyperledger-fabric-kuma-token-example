@@ -11,5 +11,12 @@
   "dependencies": {
     "@kunstmaan/hyperledger-fabric-client-utils": "^0.2.1",
     "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jest": "^21.3.2",
+    "jest": "^22.3.0"
   }
 }
