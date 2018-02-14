@@ -1,0 +1,67 @@
+{
+    "region": "eu-west-1",
+    "availability_zone": "b",
+    "security_groups": ["sg-01234567"],
+    "subnet_id": "subnet-01234567",
+    "keypair_name": "blockchain",
+    "private_key_path": "~/.ssh/blockchain.pem",
+    "ssh_username": "ubuntu",
+    "consul_master_ip": "10.42.1.4",
+    "chaincode_github": "git@github.com:user/project.git",
+    "private_ssh_key_for_chaincode_repo": "~/.ssh/user",
+    "public_ssh_key_for_chaincode_repo": "~/.ssh/user.pem",
+    "ec2s": {
+        "bar": {
+            "ami_id": "ami-785db401",
+            "instance_type": "t2.small",
+            "fabric": [{
+                    "role": "orderer",
+                    "docker": "orderer.org.bar.be.yaml"
+                },
+                {
+                    "role": "peer",
+                    "docker": "barpeer.org.bar.be.yaml",
+                    "couchdb_port": "5984"
+                },
+                {
+                    "role": "tools",
+                    "docker": "tools.org.bar.be.yaml"
+                }
+            ],
+            "ip": "10.42.1.4",
+            "memory_size": 15
+        },
+        "files_to_sync": {
+            "source1": "destination1",
+            "source2": "destination2"
+        },
+        "foo": {
+            "ami_id": "ami-785db401",
+            "instance_type": "t2.micro",
+            "fabric": [{
+                "role": "peer",
+                "docker": "foopeer.org.foo.be.yaml",
+                "couchdb_port": "5984"
+            }],
+            "ip": "10.42.1.5"
+        },
+        "root-example": {
+            "ami_id": "ami-785db401",
+            "instance_type": "t2.micro",
+            "fabric": [{
+                "role": "ca",
+                "docker": "root.example.be.yaml"
+            }],
+            "ip": "10.42.1.6"
+        },
+        "inter-example": {
+            "ami_id": "ami-785db401",
+            "instance_type": "t2.micro",
+            "fabric": [{
+                "role": "ca",
+                "docker": "inter.example.be.yaml"
+            }],
+            "ip": "10.42.1.7"
+        }
+    }
+}

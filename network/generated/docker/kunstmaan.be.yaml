@@ -1,0 +1,33 @@
+
+version: '2'
+
+# This file has been auto-generated
+
+services:
+  kunstmaan.be:
+    image:        hyperledger/fabric-ca
+    container_name: kunstmaan.be
+    ports:
+      - 7054:7054
+    command:      sh -c 'fabric-ca-server start -b admin:adminpw -d'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca/ca.kunstmaan.be-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ca/ca.kunstmaan.be-key.pem
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/tlsca/tlsca.kunstmaan.be-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/tlsca/tlsca.kunstmaan.be-key.pem
+    volumes:
+      - /vagrant/crypto-config/kunstmaan.be/:/etc/hyperledger/fabric-ca-server-config
+
+
+networks:
+  default:
+    external:
+      name: hyperledgerNet
+

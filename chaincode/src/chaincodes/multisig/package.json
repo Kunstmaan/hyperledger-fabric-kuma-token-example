@@ -1,0 +1,35 @@
+{
+    "name": "multisig",
+    "version": "1.0.0",
+    "description": "This chaincode is a simple example of a multisig contract.",
+    "engines": {
+        "node": ">=8.4.0",
+        "npm": ">=5.3.0"
+    },
+    "scripts": {
+        "start": "CORE_CHAINCODE_LOGGING_SHIM=DEBUG node chaincode.js"
+    },
+    "engine-strict": true,
+    "engineStrict": true,
+    "license": "MIT",
+    "dependencies": {
+        "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.1.0",
+        "fabric-shim": "git+https://github.com/daanporon/fabric-shim.git"
+    },
+    "hf-language": "node",
+    "hf-dev-channel": "defaultchannel",
+    "hf-network": [
+        {
+            "channelId": "defaultchannel",
+            "instantiateArgs": [],
+            "endorsementPolicy": "OR('Org1-MSP.member')",
+            "peers": [
+                "peer.org1.example.be"
+            ],
+            "orderer": {
+                "host": "orderer.org1.example.be",
+                "port": 7050
+            }
+        }
+    ]
+}

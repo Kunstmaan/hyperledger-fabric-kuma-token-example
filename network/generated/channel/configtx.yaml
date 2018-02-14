@@ -1,0 +1,144 @@
+# This file is auto-generated
+
+
+---
+################################################################################
+#
+#   SECTION: Orderer
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters
+#
+##############################################################################
+
+Orderer: &Orderer
+
+    # Orderer Type: The orderer implementation to start
+    # Available types are "solo" and "kafka"
+    OrdererType: solo
+
+
+    # Batch Timeout: The amount of time to wait before creating a batch
+    BatchTimeout: 2s
+
+    # Batch Size: Controls the number of messages batched into a block
+    BatchSize:
+
+        # Max Message Count: The maximum number of messages to permit in a batch
+        MaxMessageCount: 10
+
+        # Absolute Max Bytes: The absolute maximum number of bytes allowed for
+        # the serialized messages in a batch.
+        AbsoluteMaxBytes: 98 MB
+
+        # Preferred Max Bytes: The preferred maximum number of bytes allowed for
+        # the serialized messages in a batch. A message larger than the preferred
+        # max bytes will result in a batch larger than preferred max bytes.
+        PreferredMaxBytes: 512 KB
+
+    # Addresses of the orderers
+    Addresses:
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the orderer side of the network
+    Organizations:
+
+################################################################################
+#
+#   SECTION: Application
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for application related parameters
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
+
+################################################################################
+#
+#   Section: Organizations
+#
+#   - This section defines the different organizational identities which will
+#   be referenced later in the configuration.
+#
+################################################################################
+Organizations:
+
+    - &Kunstmaan
+      Name: Kunstmaan
+      # ID to load the MSP definition as
+      # ID must match ID given in docker file
+      ID: kunstmaan-be-MSP
+      MSPDir: ../crypto-config/kunstmaan.be/msp
+      AnchorPeers:
+        # AnchorPeers defines the location of peers which can be used
+        # for cross org gossip communication.  Note, this value is only
+        # encoded in the genesis block in the Application section context
+        - Host: kumapeer.kunstmaan.be
+          Port: 7051
+
+    - &Auth
+      Name: Auth
+      # ID to load the MSP definition as
+      # ID must match ID given in docker file
+      ID: auth-kunstmaan-be-MSP
+      MSPDir: ../crypto-config/auth.kunstmaan.be/msp
+      AnchorPeers:
+        # AnchorPeers defines the location of peers which can be used
+        # for cross org gossip communication.  Note, this value is only
+        # encoded in the genesis block in the Application section context
+        - Host: authpeer.auth.kunstmaan.be
+          Port: 7051
+
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+################################################################################
+
+
+# Organizations inside a consortium are the owners of the orderer. They can do administration tasks.
+
+Profiles:
+
+    kumachannel:
+      Consortium: KunstmaanConsortium
+      Application:
+        <<: *ApplicationDefaults
+        Organizations:
+          - *Kunstmaan
+          - *Auth
+
+    ordererkunstmaanbegenesis:
+      Orderer:
+        <<: *Orderer
+        Addresses:
+          - orderer.kunstmaan.be:7050
+        Organizations:
+          - *Kunstmaan
+      Consortiums:
+        KunstmaanConsortium:
+          Organizations:
+            - *Kunstmaan
+            - *Auth
+
+    devmodeorderergenesis:
+      Orderer:
+        <<: *Orderer
+        Addresses:
+          - orderer:7050
+        Organizations:
+          - *Kunstmaan # Single organisation
+      Consortiums:
+        # All consortiums
+        KunstmaanConsortium:
+          Organizations:
+            - *Kunstmaan
+            - *Auth

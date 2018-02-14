@@ -1,0 +1,52 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            8e:d7:10:66:0f:93:5d:0f
+        Signature Algorithm: ecdsa-with-SHA1
+        Issuer: C=be, O=kunstmaan, OU=auth, CN=auth.kunstmaan.be
+        Validity
+            Not Before: Feb 14 16:06:54 2018 GMT
+            Not After : Feb 12 16:06:54 2028 GMT
+        Subject: C=be, O=kunstmaan, OU=auth, CN=admin-auth.auth.kunstmaan.be
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+            EC Public Key:
+                pub: 
+                    04:66:31:99:54:5e:e3:c4:5c:c3:b0:4d:d3:68:ed:
+                    59:27:29:f1:35:48:f6:08:76:87:48:d0:d1:91:8a:
+                    1f:44:a3:62:a1:78:31:17:7f:bf:71:c0:27:d1:7f:
+                    95:b2:10:8b:d2:24:2a:3f:d3:ec:17:00:26:43:b7:
+                    5e:57:c1:fd:b0
+                ASN1 OID: prime256v1
+        X509v3 extensions:
+            1.2.3.4.5.6.7.8.1: 
+                ..{"attrs":{}}
+            X509v3 Authority Key Identifier: 
+                keyid:95:7B:44:03:D8:97:C6:89:B4:E3:0F:92:5E:B4:3F:F4:96:78:5F:FA
+
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                4E:30:FB:6E:93:08:06:7D:24:22:BC:3C:9D:C0:FF:13:6A:BF:59:7B
+            X509v3 Key Usage: critical
+                Digital Signature
+    Signature Algorithm: ecdsa-with-SHA1
+        30:44:02:20:43:56:67:2a:c4:88:4f:81:3e:65:4f:1a:6e:01:
+        8c:d4:4f:82:f2:02:d3:6c:01:33:20:24:12:af:d9:b0:24:29:
+        02:20:77:30:18:d9:b4:76:81:2a:79:89:de:3d:c1:03:a2:ea:
+        d5:14:00:3b:cc:c9:a5:72:80:6d:fe:fc:62:3d:0c:27
+-----BEGIN CERTIFICATE-----
+MIICEzCCAbugAwIBAgIJAI7XEGYPk10PMAkGByqGSM49BAEwTDELMAkGA1UEBhMC
+YmUxEjAQBgNVBAoMCWt1bnN0bWFhbjENMAsGA1UECwwEYXV0aDEaMBgGA1UEAwwR
+YXV0aC5rdW5zdG1hYW4uYmUwHhcNMTgwMjE0MTYwNjU0WhcNMjgwMjEyMTYwNjU0
+WjBXMQswCQYDVQQGEwJiZTESMBAGA1UECgwJa3Vuc3RtYWFuMQ0wCwYDVQQLDARh
+dXRoMSUwIwYDVQQDDBxhZG1pbi1hdXRoLmF1dGgua3Vuc3RtYWFuLmJlMFkwEwYH
+KoZIzj0CAQYIKoZIzj0DAQcDQgAEZjGZVF7jxFzDsE3TaO1ZJynxNUj2CHaHSNDR
+kYofRKNioXgxF3+/ccAn0X+VshCL0iQqP9PsFwAmQ7deV8H9sKN8MHowGgYIKgME
+BQYHCAEEDgwMeyJhdHRycyI6e319MB8GA1UdIwQYMBaAFJV7RAPYl8aJtOMPkl60
+P/SWeF/6MAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFE4w+26TCAZ9JCK8PJ3A/xNq
+v1l7MA4GA1UdDwEB/wQEAwIHgDAJBgcqhkjOPQQBA0cAMEQCIENWZyrEiE+BPmVP
+Gm4BjNRPgvIC02wBMyAkEq/ZsCQpAiB3MBjZtHaBKnmJ3j3BA6Lq1RQAO8zJpXKA
+bf78Yj0MJw==
+-----END CERTIFICATE-----

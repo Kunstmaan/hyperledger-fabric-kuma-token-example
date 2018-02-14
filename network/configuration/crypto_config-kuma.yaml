@@ -1,0 +1,184 @@
+# Created by Guillaume Leurquin, guillaume.leurquin@accenture.com
+
+# Assumes port 7051 is first in the peers.
+# Assumes the organisation admin is first in the admins
+# Tools CLI uses the first orderer in the list for each org
+# This file makes heavy uses of yaml pointers.
+# Note that you cannot use a pointer before it has been defined
+# (pointers can only be used below their definition)
+
+PREGEN_CAs:
+  # This section defines certificate authorities that are generated appart
+  # from the ones of hyperledger fabric. You can define an initial CA chain here.
+  # All certificates created here and for the hyperledger fabric network are given
+  # organisation unit (OU), country (C), common name (CN), organisation (ORG) created
+  # automatically from the domain name, the following way :
+  #     (anything.)OU.ORG.C
+  #     CN = (anything.)OU.ORG.C
+  # For example, the domain name foo.bar.example.be would have the following fields set in its certificate:
+  #     OU = bar
+  #     ORG = example
+  #     C = be
+  #     CN = foo.bar.example.be
+  # IMPORTANT limitations:
+  #     --> The C field MUST consist of 2 letters.
+  #     --> Hyperledger fabric has issues with name resolving if that the domain names are not all LOWERCASE
+  #     --> all fields do not have to be filled. They will be filled from right to left.
+  # These certificate authorities will have all the following permissions:
+  #     > Digital Signature, Key Encipherment, Certificate Sign, CRL Sign
+  #
+  # In this config file, a certifiate authority (CA) consists of
+  #     > Domain: The name of the CA
+  #     > Port: The port on which the hyperledger fabric ca should run
+  #     > Parent (optional): If provided, points to the structure of the parent certificate.
+  # There are two types of CAs:
+  #     > Intermediate
+  #         An intermediate ca has a Parent field, which points to the structure
+  #         of its parent certificate.
+  #     > Root
+  #         A root ca does not have a Parent field
+  # There could be multiple root CAs, and/or intermediate CAs
+  # These certificates will have two folders, one for ca and one for tlsca.
+  # They both will contain the same certificates. This is done for ease of programming.
+
+  - ca: &KUMA_CA
+      Domain: &KumaDomain kunstmaan.be
+      Port: 7054
+
+# This section defines the organisations that are part of the hyperledger fabric network
+# Each organisation must have the following fields set:
+#   > Name: the name of the organisation
+#   > Domain: The domain name of the organisation
+#   > ca:  contains the CA certificates
+#       > Parent: pointer to the parent certificate structure, which can be any of the Pregen CAs, or another CA
+#       > Domain: The domain of this certificate. This should be the domain of the organisation
+#   > tlsca:  contains the TLSCA certificates
+#       > Parent: pointer to the parent certificate structure, which can be any of the Pregen CAs, or another TLSCA
+#       > Domain: The domain of this certificate. This should be the domain of the organisation
+#   > peers: (optional) contains a list of the peers of the organisation
+#       > Hostname: The hostname of the peer
+#       > Ports: (order of the ports is important)
+#           - HOSTPORT:CONTAINER_PORT # Docker Port mapping for the CORE_PEER_ADDRESS of the peer (by default port 7051)
+#           - HOSTPORT:CONTAINER_PORT # Docker Port mapping for the events of the peer (by default port 7053)
+#       > CouchdbPort: Couchdb port, by default 5984
+#       > Tools: (optional) add an optional tools CLI configuration for this peer,
+#                to do this, give the channel name on which this CLI should run
+#                You should have one tools per channel
+#   > orderers: (optional) list of orderers for this organisation
+#       - Hostname: orderer
+#       > Peers: list of peers this orderer should take care of
+#           - Hostname: peer's hostname
+#           > Org: peer's organisation
+#       Note:   The domain of the peer will be build the following way: hostname.org
+#               Which implies the hostname should be lower case too
+#       > Port: port on which the orderer runs. Default is 7050
+#       > AdminOrgs: list of organisation names who can make changes to this orderer.
+#                    This must be a subset of the consortiums
+#           - name of the organisation
+#       > Consortiums: List of reference to consortiums
+#           - &Consortium # Definition of a pointer (change pointer name to suit needs)
+#           > Name: name of the consortium
+#           > Organizations: list of organisation names
+#               - name of the organisation
+#   > Channels: the channels this orderer has access to
+#       - channel name
+#   > admins: list of administrators for this organisation.
+#       - Hostname: name of the administrator
+#     Note: The domain of the admin will be build the following way: hostname.org
+#           Which implies the hostname should be lower case too
+#   > users: list of users that can interact with the channel
+#       - Hostname: name of the user
+#       > Attributes: (optional) list of key-values that will be added as a json object
+#                     to the certificate's field 1.2.3.4.5.6.7.8.1, which can be read by
+#                     hyperledger fabric chaincode.
+#           - key: value
+#     Note: The domain of the user will be build the following way: hostname.org
+#           Which implies the hostname should be lower case too
+# An MSP id will be created for that organisation, equal to its domain with dots replaced by -
+# Because an MSP ID cannot include dots (when adding policies, it messes things up)
+
+Orgs:
+  - &KumaOrg
+    Name: &KumaName Kunstmaan
+    Domain: *KumaDomain
+    ca: *KUMA_CA
+    tlsca: &KUMA_TLSCA
+      Domain: *KumaDomain
+      Port: 7054
+    peers:
+      - Hostname: &KumaPeer kumapeer
+        Ports:
+          - 7051:7051
+          - 7053:7053
+        CouchdbPort: 5984
+        Tools: kumachannel
+    orderers:
+      - Hostname: orderer
+        Peers:
+          - Hostname: *KumaPeer
+            Org: *KumaDomain
+        Port: 7050
+        AdminOrgs:
+          # Must be a subset of the consortiums
+          - *KumaName
+        Consortiums:
+          # Refers to consortium name
+          - &KunstmaanConsortium
+            Name: KunstmaanConsortium
+            Organizations:
+                - *KumaName
+                - Auth
+        Channels:
+          - &kumachannel kumachannel
+    admins:
+      - Hostname: admin-kuma
+
+  - Name: &AuthName Auth
+    Domain: &AuthDomain auth.kunstmaan.be
+    ca: &AUTH_CA
+      Parent: *KUMA_CA
+      Domain: *AuthDomain
+    tlsca: &AUTH_TLSCA
+      Parent: *KUMA_TLSCA
+      Domain: *AuthDomain
+    peers:
+      - Hostname: &AuthPeer authpeer
+        Ports:
+          - 7051:7051
+          - 7053:7053
+        CouchdbPort: 5984
+    admins:
+      - Hostname: admin-auth
+    users:
+      - Hostname: user-1
+        Attributes:
+          Name: "user-1"
+      - Hostname: user-2
+        Attributes:
+          Name: "user-2"
+      - Hostname: user-3
+        Attributes:
+          Name: "user-3"
+      - Hostname: user-4
+        Attributes:
+          Name: "user-4"
+      - Hostname: user-5
+        Attributes:
+          Name: "user-5"
+
+# This section describes the channels to create. Each channel has the following fields:
+#   - Name: the name of the channel
+#   > Consortium: pointer to the consortium's structure
+#   > Organizations: list of organisation names
+#       - organisation name
+Channels:
+  - Name: *kumachannel
+    Consortium: *KunstmaanConsortium
+    Organizations:
+      - *KumaName
+      - *AuthName
+
+# This section is for the development mode. It will create a simplified version
+# of the network. This should point to the structure of an organisation with at least a peer and an orderer.
+# It will create a simplified network with the first peer and the first orderer of that organisation
+Devmode: *KumaOrg

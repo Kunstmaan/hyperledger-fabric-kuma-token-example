@@ -1,0 +1,59 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es6": true,
+        "jest/globals": true
+    },
+    "parserOptions": {
+        "sourceType": "module",
+        "modules": true,
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true
+        }
+    },
+    "plugins": [
+        "jest"
+    ],
+    "extends": "airbnb-base",
+    "rules": {
+        "arrow-body-style": "off",
+        "arrow-parens": ["error", "always"],
+        "comma-dangle": ["error", "never"],
+        "default-case": "off",
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "max-len": ["error", 250, {"ignoreComments": true, "ignoreTemplateLiterals": true}],
+        "no-console": 0,
+        "no-new": "off",
+        "no-use-before-define": ["error", {"functions": false, "classes": true}],
+        "no-trailing-spaces": ["error", {"skipBlankLines": true}],
+        "linebreak-style": ["error", "unix"],
+        "object-curly-spacing": ["error", "never"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "space-before-blocks": ["error", "always"],
+        "space-before-function-paren": ["error", {
+            "anonymous": "never",
+            "named": "never",
+            "asyncArrow": "always"
+        }],
+        "no-param-reassign": ["error", { "props": true }],
+        "import/prefer-default-export": "off",
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": ["gulpfile.babel.js"]}],
+        "import/no-dynamic-require": "off",
+        "global-require": "off",
+        "func-names": "off",
+        "no-restricted-syntax": "off",
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/prefer-to-have-length": "warn",
+        "jest/valid-expect": "error",
+        "quote-props": "off",
+        "no-await-in-loop": "off",
+        "class-methods-use-this": "off",
+        "padded-blocks": "off"
+    },
+    "globals": {"module": true, "jest": true}
+}
