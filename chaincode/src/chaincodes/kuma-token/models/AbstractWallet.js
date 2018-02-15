@@ -7,8 +7,8 @@ const logger = utils.logger.getLogger('models/AbstractWallet');
 
 class AbstractWallet {
 
-    static async queryWalletById(txHelper, id) {
-        const dbData = await txHelper.getStateAsObject(id);
+    static async queryWalletByAddress(txHelper, address) {
+        const dbData = await txHelper.getStateAsObject(address);
 
         return mapDBDataToObject(dbData);
     }

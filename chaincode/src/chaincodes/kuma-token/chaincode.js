@@ -50,7 +50,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
         let fromWallet;
         if (fromAddress) {
-            fromWallet = await AbstractWallet.queryWalletById(fromAddress);
+            fromWallet = await AbstractWallet.queryWalletByAddress(fromAddress);
 
             if (!fromWallet) {
 
@@ -62,7 +62,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             fromWallet = await this.retrieveOrCreateMyWallet(stub, txHelper);
         }
 
-        const toWallet = await AbstractWallet.queryWalletById(toAddress);
+        const toWallet = await AbstractWallet.queryWalletByAddress(toAddress);
 
         if (!toWallet) {
 
