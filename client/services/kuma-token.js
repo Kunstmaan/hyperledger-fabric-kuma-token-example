@@ -7,12 +7,21 @@ const {
 module.exports = baseService(
     KEYSTORE_PATH,
     'kuma-token',
-    (query) => {
+    (query, invoke) => {
         return {
             ping: (userId) => {
                 return query({
                     chaincode: {
                         fcn: 'ping',
+                        args: []
+                    },
+                    userId
+                });
+            },
+            retrieveOrCreateWalletFor: (userId) => {
+                return invoke({
+                    chaincode: {
+                        fcn: 'retrieveOrCreateMyWallet',
                         args: []
                     },
                     userId

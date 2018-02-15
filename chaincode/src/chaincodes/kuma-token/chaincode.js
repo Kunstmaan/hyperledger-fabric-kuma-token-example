@@ -47,7 +47,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
                 'expected': 'address'
             });
         }
-        
+
         let fromWallet;
         if (fromAddress) {
             fromWallet = await AbstractWallet.queryWalletById(fromAddress);
@@ -109,10 +109,10 @@ const KumaTokenChaincode = class extends ChaincodeBase {
         }
 
         return new UserWallet({
-            address: txHelper.uuid(CONSTANTS.WALLET),
+            address: txHelper.uuid(CONSTANTS.PREFIXES.WALLET),
             publicKeyHash: txHelper.getCreatorPublicKey(),
             amount: 1000 // add an inital amount of 1000 tokens
-        }).save();
+        }).save(txHelper);
     }
 
 };

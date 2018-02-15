@@ -1,7 +1,9 @@
-const {ChaincodeError} = require('@kunstmaan/hyperledger-fabric-node-chaincode-utils');
+const {ChaincodeError, utils} = require('@kunstmaan/hyperledger-fabric-node-chaincode-utils');
 
 const CONSTANTS = require('./../common/constants');
 const ERRORS = require('./../common/constants/errors');
+
+const logger = utils.logger.getLogger('models/AbstractWallet');
 
 class AbstractWallet {
 
@@ -22,6 +24,8 @@ class AbstractWallet {
                 ]
             }
         });
+
+        logger.debug(`Query Result ${allResults}`);
 
         return allResults.map((result) => result.record).map(mapDBDataToObject);
     }
@@ -78,7 +82,7 @@ class AbstractWallet {
 module.exports = AbstractWallet;
 
 function mapDBDataToObject(dbData) {
-    if (!CONSTANTS.WALLET_TYPE_CLASSNAME_MAPPING.keys().includes(dbData.type)) {
+    if (!Object.keys(CONSTANTS.WALLET_TYPE_CLASSNAME_MAPPING).includes(dbData.type)) {
 
         throw new ChaincodeError(ERRORS.TYPE_ERROR, {
             'type': dbData.type
