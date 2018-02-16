@@ -6,9 +6,12 @@ const CONSTANTS = require('./common/constants/index');
 
 const AbstractWallet = require('./models/AbstractWallet');
 const UserWallet = require('./models/UserWallet');
+const ContractWallet = require('./models/ContractWallet');
 
+const isArray = require('./common/validators/isArray');
 const isFloat = require('./common/validators/isFloat');
-const isAddress = require('./common/validators/isAddress');
+const isUUID = require('./common/validators/isUUID');
+const isString = require('./common/validators/isString');
 
 const KumaTokenChaincode = class extends ChaincodeBase {
 
@@ -30,7 +33,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             });
         }
 
-        if (!isAddress(toAddress)) {
+        if (!isUUID(CONSTANTS.PREFIXES.WALLET, toAddress)) {
 
             throw new ChaincodeError(ERRORS.TYPE_ERROR, {
                 'param': 'toAddress',
@@ -39,7 +42,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             });
         }
 
-        if (fromAddress && !isAddress(fromAddress)) {
+        if (fromAddress && !isUUID(CONSTANTS.PREFIXES.WALLET, fromAddress)) {
 
             throw new ChaincodeError(ERRORS.TYPE_ERROR, {
                 'param': 'fromAddress',
@@ -66,7 +69,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
         if (!toWallet) {
 
-            throw new ChaincodeError(ERRORS.UNKNWON_WALLET, {
+            throw new ChaincodeError(ERRORS.UNKNOWN_ENTITY, {
                 'address': toAddress
             });
         }
@@ -105,6 +108,24 @@ const KumaTokenChaincode = class extends ChaincodeBase {
     /**
      * @param {Stub} stub
      * @param {TransactionHelper} txHelper
+     * @param {String} address
+     */
+    async retrieveWallet(stub, txHelper, address) {
+        if (!isUUID(CONSTANTS.PREFIXES.WALLET, address)) {
+
+            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
+                'param': 'address',
+                'value': address,
+                'expected': 'address'
+            });
+        }
+
+        return AbstractWallet.queryWalletByAddress(txHelper, address);
+    }
+
+    /**
+     * @param {Stub} stub
+     * @param {TransactionHelper} txHelper
      */
     async retrieveOrCreateMyWallet(stub, txHelper) {
         const myWallet = await UserWallet.queryCurrentUserWallet(txHelper);
@@ -118,6 +139,39 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             address: txHelper.uuid(CONSTANTS.PREFIXES.WALLET),
             publicKeyHash: txHelper.getCreatorPublicKey(),
             amount: 1000 // add an inital amount of 1000 tokens
+        }).save(txHelper);
+    }
+
+    /**
+     * @param {Stub} stub
+     * @param {TransactionHelper} txHelper
+     * @param {String} chaincodeName
+     * @param {Array} chaincodeFunctions (optional)
+     */
+    async createContractWallet(stub, txHelper, chaincodeName, chaincodeFunctions) {
+        if (!isString(chaincodeName)) {
+
+            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
+                'param': 'chaincodeName',
+                'value': chaincodeName,
+                'expected': 'string'
+            });
+        }
+
+        if (chaincodeFunctions && (!isArray(chaincodeFunctions) || chaincodeFunctions.length === 0 || !chaincodeFunctions.every((chaincodeFunction) => isString(chaincodeFunction)))) {
+
+            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
+                'param': 'chaincodeFunctions',
+                'value': chaincodeFunctions,
+                'expected': 'string array'
+            });
+        }
+
+        return new ContractWallet({
+            chaincodeName,
+            chaincodeFunctions,
+            address: txHelper.uuid(CONSTANTS.PREFIXES.WALLET),
+            amount: 0
         }).save(txHelper);
     }
 

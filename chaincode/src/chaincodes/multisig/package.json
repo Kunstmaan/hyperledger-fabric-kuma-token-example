@@ -13,7 +13,7 @@
     "engineStrict": true,
     "license": "MIT",
     "dependencies": {
-        "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.2.0",
+        "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.3.0",
         "fabric-shim": "git+https://github.com/daanporon/fabric-shim.git"
     },
     "hf-language": "node",

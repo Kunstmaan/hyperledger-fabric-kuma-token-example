@@ -18,6 +18,15 @@ module.exports = baseService(
                     userId
                 });
             },
+            retrieveWallet: (userId, address) => {
+                return query({
+                    chaincode: {
+                        fcn: 'retrieveWallet',
+                        args: [address]
+                    },
+                    userId
+                });
+            },
             retrieveOrCreateWalletFor: (userId) => {
                 return invoke({
                     chaincode: {
