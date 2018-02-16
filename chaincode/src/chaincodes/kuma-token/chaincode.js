@@ -90,13 +90,16 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
         this.logger.info(`Transfering ${amount} from ${fromWallet.address} to ${toAddress.address}`);
 
-        fromWallet.save(txHelper);
-        toWallet.save(txHelper);
+        return Promise.all([
+            fromWallet.save(txHelper),
+            toWallet.save(txHelper)
+        ]).then(([from, to]) => {
 
-        return {
-            'from': fromWallet,
-            'to': toWallet
-        };
+            return {
+                'from': from,
+                'to': to
+            };
+        });
     }
 
     /**
