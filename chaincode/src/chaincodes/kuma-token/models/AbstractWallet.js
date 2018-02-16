@@ -46,11 +46,6 @@ class AbstractWallet {
     }
 
     addAmount(amount) {
-        if (amount < 0) {
-
-            throw new ChaincodeError();
-        }
-
         this.amount += amount;
 
         return this;

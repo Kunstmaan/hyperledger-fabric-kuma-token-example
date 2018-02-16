@@ -50,7 +50,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
         let fromWallet;
         if (fromAddress) {
-            fromWallet = await AbstractWallet.queryWalletByAddress(fromAddress);
+            fromWallet = await AbstractWallet.queryWalletByAddress(txHelper, fromAddress);
 
             if (!fromWallet) {
 
@@ -62,7 +62,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             fromWallet = await this.retrieveOrCreateMyWallet(stub, txHelper);
         }
 
-        const toWallet = await AbstractWallet.queryWalletByAddress(toAddress);
+        const toWallet = await AbstractWallet.queryWalletByAddress(txHelper, toAddress);
 
         if (!toWallet) {
 
@@ -90,9 +90,12 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
         this.logger.info(`Transfering ${amount} from ${fromWallet.address} to ${toAddress.address}`);
 
+        fromWallet.save(txHelper);
+        toWallet.save(txHelper);
+
         return {
-            'fromWallet': fromWallet,
-            'toWallet': toWallet
+            'from': fromWallet,
+            'to': toWallet
         };
     }
 

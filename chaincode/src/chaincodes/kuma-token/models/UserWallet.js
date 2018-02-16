@@ -57,7 +57,7 @@ class UserWallet extends AbstractWallet {
     }
 
     txCreatorHasPermissions(txHelper) {
-        const txCreator = txHelper.getCreatorPublicKey;
+        const txCreator = txHelper.getCreatorPublicKey();
 
         return txCreator === this.publicKeyHash;
     }

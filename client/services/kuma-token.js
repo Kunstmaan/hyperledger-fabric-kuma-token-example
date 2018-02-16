@@ -26,6 +26,15 @@ module.exports = baseService(
                     },
                     userId
                 });
+            },
+            transfer: (userId, amount, to, from = undefined) => {
+                return invoke({
+                    chaincode: {
+                        fcn: 'transfer',
+                        args: [amount, to, from]
+                    },
+                    userId
+                });
             }
         };
     },
