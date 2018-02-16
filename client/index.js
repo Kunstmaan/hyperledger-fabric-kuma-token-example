@@ -12,4 +12,11 @@ files.forEach((commandName) => {
     argv = argv.command(require(commandPath));
 });
 
+argv = argv.option('user', {
+    'alias': 'u',
+    'type': 'string',
+    'describe': 'The user which should execute this command.',
+    'default': 'user-1'
+});
+
 argv.help('h').alias('h', 'help').argv; // eslint-disable-line

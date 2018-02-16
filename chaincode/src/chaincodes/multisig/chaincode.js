@@ -19,12 +19,12 @@ const MultisigChaincode = class extends ChaincodeBase {
      * @param {Int} signaturesNeeded (optional) default all signatures
      */
     async createMultisigWallet(stub, txHelper, publicKeyHashes, signaturesNeeded) {
-        if (!isArray(publicKeyHashes) || publicKeyHashes.length === 0) {
+        if (!isArray(publicKeyHashes) || publicKeyHashes.length <= 1) {
 
             throw new ChaincodeError(ERRORS.TYPE_ERROR, {
                 'param': 'publicKeyHashes',
                 'value': publicKeyHashes,
-                'expected': 'not empty array'
+                'expected': 'array with minimum 2 elements'
             });
         }
 
@@ -47,9 +47,9 @@ const MultisigChaincode = class extends ChaincodeBase {
         }
 
         const multisigWallet = await txHelper.invokeChaincode(
-            CONSTANTS.CHAINCCODES.KUMA_TOKEN,
+            CONSTANTS.CHAINCODES.KUMA_TOKEN,
             'createContractWallet',
-            [CONSTANTS.CHAINCCODES.MULTISIG, ['requestTransfer', 'approveTransfer']]
+            [CONSTANTS.CHAINCODES.MULTISIG, ['requestTransfer', 'approveTransfer']]
         );
 
         const multisigContract = {
@@ -103,9 +103,9 @@ const MultisigChaincode = class extends ChaincodeBase {
         let fromContract = await txHelper.getStateAsObject(fromAddress);
         if (!fromContract) {
             // maybe it's a wallet address
-            const results = txHelper.getQueryResultAsList({
-                '$selector': {
-                    'wallet': fromAddress
+            const results = await txHelper.getQueryResultAsList({
+                'selector': {
+                    'walletAddress': fromAddress
                 }
             });
 
@@ -131,13 +131,13 @@ const MultisigChaincode = class extends ChaincodeBase {
         };
 
         if (multisigTransferRequest.approvals.length >= fromContract.signaturesNeeded) {
-            await await txHelper.invokeChaincode(
-                CONSTANTS.CHAINCCODES.KUMA_TOKEN,
+            await txHelper.invokeChaincode(
+                CONSTANTS.CHAINCODES.KUMA_TOKEN,
                 'transfer',
                 [
                     multisigTransferRequest.transaction.amount,
                     multisigTransferRequest.transaction.toAddress,
-                    fromContract.wallet
+                    fromContract.walletAddress
                 ]
             );
 
@@ -173,6 +173,16 @@ const MultisigChaincode = class extends ChaincodeBase {
             });
         }
 
+        const creatorPublicKey = txHelper.getCreatorPublicKey();
+        const contract = await txHelper.getStateAsObject(multisigTransferRequest.contract);
+
+        if (!contract.publicKeyHashes.includes(creatorPublicKey)) {
+
+            throw new ChaincodeError(ERRORS.NOT_PERMITTED, {
+                'publicKeyHash': creatorPublicKey
+            });
+        }
+
         if (multisigTransferRequest.executed) {
 
             throw new ChaincodeError(ERRORS.TRANSFER_ALREADY_EXECUTED, {
@@ -180,7 +190,6 @@ const MultisigChaincode = class extends ChaincodeBase {
             });
         }
 
-        const creatorPublicKey = txHelper.getCreatorPublicKey();
         if (multisigTransferRequest.approvals.includes(creatorPublicKey)) {
 
             throw new ChaincodeError(ERRORS.TRANSFER_ALREADY_APPROVED, {
@@ -190,15 +199,14 @@ const MultisigChaincode = class extends ChaincodeBase {
 
         multisigTransferRequest.approvals.push(creatorPublicKey);
 
-        const contract = await txHelper.getStateAsObject(multisigTransferRequest.contract);
         if (multisigTransferRequest.approvals.length >= contract.signaturesNeeded) {
-            await await txHelper.invokeChaincode(
-                CONSTANTS.CHAINCCODES.KUMA_TOKEN,
+            await txHelper.invokeChaincode(
+                CONSTANTS.CHAINCODES.KUMA_TOKEN,
                 'transfer',
                 [
                     multisigTransferRequest.transaction.amount,
                     multisigTransferRequest.transaction.toAddress,
-                    contract.wallet
+                    contract.walletAddress
                 ]
             );
 
