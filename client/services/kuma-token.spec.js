@@ -1,3 +1,5 @@
+const fs = require('fs-extra');
+const path = require('path');
 const testSetup = require('../test/testSetup');
 const kumaToken = require('./kuma-token');
 const createUser = require('./../utils/create-user');
@@ -7,22 +9,23 @@ const TEST2_NAME = 'kuma-token-test2';
 
 const DEFAULT_AMOUNT = 1000;
 
+let testUser1;
+let testUser2;
+
 beforeAll(testSetup);
 beforeAll(async () => {
     // create 2 test-users
-    await createUser({name: TEST1_NAME});
-    await createUser({name: TEST2_NAME});
+    testUser1 = await createUser({name: TEST1_NAME});
+    testUser2 = await createUser({name: TEST2_NAME});
 });
 
 afterAll(async () => {
-    const test1Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST1_NAME);
-    const test2Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST2_NAME);
-
-    const diff = test1Wallet.amount - test2Wallet.amount;
-    if (diff > 0) {
-        await kumaToken.transfer(TEST1_NAME, Math.abs(diff), test2Wallet.address);
-    } else if (diff < 0) {
-        await kumaToken.transfer(TEST2_NAME, Math.abs(diff), test1Wallet.address);
+    // cleanup test-users
+    for (const user of [testUser1, testUser2]) {
+        await fs.remove(path.resolve(__dirname, `../../network/generated/crypto-config/auth.kunstmaan.be/users/${user.name}.auth.kunstmaan.be/`));
+        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.name}`));
+        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.enrollment.signingIdentity}-priv`));
+        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.enrollment.signingIdentity}-pub`));
     }
 });
 
@@ -62,9 +65,6 @@ test(`transfer 10 coins from  ${TEST1_NAME} to ${TEST2_NAME}`, async () => {
 
     const test2WalletRetrieve = await kumaToken.retrieveWallet(TEST2_NAME, updatedWallets.to.address);
     expect(test2WalletRetrieve.amount).toBe(DEFAULT_AMOUNT + 10);
-
-    // cleanup pay back the difference
-    await kumaToken.transfer(TEST2_NAME, 10, updatedWallets.from.address);
 });
 
 test(`illegal transfer of 10 coins from ${TEST1_NAME} by ${TEST2_NAME}`, async () => {

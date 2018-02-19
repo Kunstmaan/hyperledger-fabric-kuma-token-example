@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const commandExists = require('command-exists');
 const {exec} = require('child_process');
 const path = require('path');
@@ -26,7 +27,10 @@ module.exports = function({name, verbose = false}) {
                 if (verbose) {
                     console.log(stdout);
                 }
-                fulfill();
+
+                fs.readFile(path.resolve(__dirname, `../../network/generated/hfc-key-store/${name}`)).then((fileContents) => {
+                    fulfill(fileContents);
+                }).catch(reject);
             });
         });
     });

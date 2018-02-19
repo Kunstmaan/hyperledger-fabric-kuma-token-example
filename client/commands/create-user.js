@@ -9,5 +9,7 @@ module.exports.handler = function(argv) {
     return createUser({
         name: argv.name,
         verbose: true
+    }).then((user) => {
+        console.log(`User: ${user}`);
     });
 };
