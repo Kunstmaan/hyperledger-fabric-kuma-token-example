@@ -120,4 +120,16 @@ test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', a
     expect(multisigWallet.amount).toBe(10);
 });
 
-// too many signatures needed
+test('create a 3-2 multisig wallet, this should not work', async () => {
+    const publicKeys = await Promise.all([TEST1_NAME, TEST2_NAME].map((user) => {
+
+        return getUserPublicKey(user);
+    }));
+
+    await multisig.createMultisigContract(TEST1_NAME, publicKeys, 3).then(() => {
+        expect('should have thrown an error').toBeFalsy();
+    }).catch((err) => {
+        expect(err.key).toEqual('type_error');
+        expect(err.data.param).toEqual('signaturesNeeded');
+    });
+});
