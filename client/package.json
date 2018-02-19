@@ -11,6 +11,7 @@
   "dependencies": {
     "@kunstmaan/hyperledger-fabric-client-utils": "^0.2.1",
     "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.3.0",
+    "command-exists": "^1.2.2",
     "fs-extra": "^5.0.0",
     "yargs": "^11.0.0"
   },
