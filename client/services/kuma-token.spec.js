@@ -64,15 +64,16 @@ test(`illegal transfer of 10 coins from ${TEST1_NAME} by ${TEST2_NAME}`, async (
 
     expect.assertions(1);
     await kumaToken.transfer(TEST1_NAME, 10, test2Wallet.address, test2Wallet.address).catch((err) => {
-        expect(err).toBeDefined(); // @todo message is undefined? how are errors returned? not_permitted
+        expect(err.key).toEqual('not_permitted');
     });
 });
 
 test(`illegal transfer of to many coins from ${TEST1_NAME}`, async () => {
     const test2Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST2_NAME);
 
-    expect.assertions(1);
-    await kumaToken.transfer(TEST1_NAME, 2000, test2Wallet.address).catch((err) => {
-        expect(err).toBeDefined(); // @todo insufficient_funds
+    await kumaToken.transfer(TEST1_NAME, 2000, test2Wallet.address).then(() => {
+        expect('should have thrown an error').toBeFalsy();
+    }).catch((err) => {
+        expect(err.key).toEqual('insufficient_funds');
     });
 });

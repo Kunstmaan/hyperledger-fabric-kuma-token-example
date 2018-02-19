@@ -18,7 +18,7 @@ const MultisigChaincode = class extends ChaincodeBase {
      * @param {Array} publicKeyHashes
      * @param {Int} signaturesNeeded (optional) default all signatures
      */
-    async createMultisigWallet(stub, txHelper, publicKeyHashes, signaturesNeeded) {
+    async createMultisigContract(stub, txHelper, publicKeyHashes, signaturesNeeded) {
         if (!isArray(publicKeyHashes) || publicKeyHashes.length <= 1) {
 
             throw new ChaincodeError(ERRORS.TYPE_ERROR, {
@@ -152,24 +152,24 @@ const MultisigChaincode = class extends ChaincodeBase {
     /**
      * @param {Stub} stub
      * @param {TransactionHelper} txHelper
-     * @param {String} requestId the id of the transaction request
+     * @param {String} transferId the id of the transaction request
      */
-    async approveTransfer(stub, txHelper, requestId) {
-        if (!isUUID(CONSTANTS.PREFIXES.MULTISIG_REQUEST, requestId)) {
+    async approveTransfer(stub, txHelper, transferId) {
+        if (!isUUID(CONSTANTS.PREFIXES.MULTISIG_REQUEST, transferId)) {
 
             throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'requestId',
-                'value': requestId,
-                'expected': 'multisig request id'
+                'param': 'transferId',
+                'value': transferId,
+                'expected': 'multisig transfer id'
             });
         }
 
-        const multisigTransferRequest = await txHelper.getStateAsObject(requestId);
+        const multisigTransferRequest = await txHelper.getStateAsObject(transferId);
 
         if (!multisigTransferRequest) {
 
             throw new ChaincodeError(ERRORS.UNKNOWN_ENTITY, {
-                'requestId': requestId
+                'transferId': transferId
             });
         }
 
@@ -186,14 +186,14 @@ const MultisigChaincode = class extends ChaincodeBase {
         if (multisigTransferRequest.executed) {
 
             throw new ChaincodeError(ERRORS.TRANSFER_ALREADY_EXECUTED, {
-                'requestId': requestId
+                'transferId': transferId
             });
         }
 
         if (multisigTransferRequest.approvals.includes(creatorPublicKey)) {
 
             throw new ChaincodeError(ERRORS.TRANSFER_ALREADY_APPROVED, {
-                'requestId': requestId
+                'transferId': transferId
             });
         }
 

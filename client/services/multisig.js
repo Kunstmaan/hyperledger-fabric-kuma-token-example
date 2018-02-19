@@ -18,10 +18,10 @@ module.exports = baseService(
                     userId
                 });
             },
-            createMultisigWallet: (userId, publicKeyHashes, signaturesNeeded = undefined) => {
+            createMultisigContract: (userId, publicKeyHashes, signaturesNeeded = undefined) => {
                 return invoke({
                     chaincode: {
-                        fcn: 'createMultisigWallet',
+                        fcn: 'createMultisigContract',
                         args: [publicKeyHashes, signaturesNeeded]
                     },
                     userId
