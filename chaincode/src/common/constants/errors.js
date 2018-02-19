@@ -5,7 +5,7 @@ module.exports = {
     TYPE_ERROR: 'type_error',
     NOT_PERMITTED: 'not_permitted',
 
-    INSUFFICIENT_FUNDS: 'insufficient funds',
+    INSUFFICIENT_FUNDS: 'insufficient_funds',
     MULTIPLE_WALLETS_FOUND_FOR_USER: 'multiple_wallets_found_for_user',
 
     TRANSFER_ALREADY_EXECUTED: 'transfer_already_executed',
