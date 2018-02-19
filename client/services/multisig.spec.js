@@ -109,12 +109,12 @@ test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', a
     await kumaToken.transfer(TEST1_NAME, 10, multisigWallet.address);
     await kumaToken.transfer(TEST2_NAME, 10, multisigWallet.address);
 
-    let test4Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST4_NAME);
+    const test4Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST4_NAME);
 
     await multisig.requestTransfer(TEST1_NAME, 10, multisigContract.address, test4Wallet.address);
 
-    test4Wallet = await kumaToken.retrieveWallet(TEST4_NAME, test4Wallet.address);
-    expect(test4Wallet.amount).toBe(test4Wallet.amount + 10);
+    const updatedTest4Wallet = await kumaToken.retrieveWallet(TEST4_NAME, test4Wallet.address);
+    expect(updatedTest4Wallet.amount).toBe(test4Wallet.amount + 10);
 
     multisigWallet = await kumaToken.retrieveWallet(TEST1_NAME, multisigContract.walletAddress);
     expect(multisigWallet.amount).toBe(10);
