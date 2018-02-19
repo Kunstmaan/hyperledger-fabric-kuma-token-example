@@ -9,6 +9,7 @@ const getUserPublicKey = require('./../utils/get-user-public-key');
 const TEST1_NAME = 'multisig-test1';
 const TEST2_NAME = 'multisig-test2';
 const TEST3_NAME = 'multisig-test3';
+const TEST4_NAME = 'multisig-test4';
 
 beforeAll(testSetup);
 beforeAll(async () => {
@@ -16,11 +17,12 @@ beforeAll(async () => {
     await createUser({name: TEST1_NAME});
     await createUser({name: TEST2_NAME});
     await createUser({name: TEST3_NAME});
+    await createUser({name: TEST4_NAME});
 });
 
 afterAll(async () => {
     // cleanup test-users
-    cleanupUsers([TEST1_NAME, TEST2_NAME, TEST3_NAME]);
+    cleanupUsers([TEST1_NAME, TEST2_NAME, TEST3_NAME, TEST4_NAME]);
 });
 
 test('ping to check if the service is running', async () => {
@@ -96,7 +98,7 @@ test('create a 2-3 multisig wallet and do an illegal transfer of 10 coins', asyn
 });
 
 test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', async () => {
-    const publicKeys = await Promise.all([TEST1_NAME, TEST3_NAME].map((user) => {
+    const publicKeys = await Promise.all([TEST1_NAME, TEST2_NAME].map((user) => {
 
         return getUserPublicKey(user);
     }));
@@ -105,14 +107,14 @@ test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', a
     let multisigWallet = await kumaToken.retrieveWallet(TEST1_NAME, multisigContract.walletAddress);
 
     await kumaToken.transfer(TEST1_NAME, 10, multisigWallet.address);
-    await kumaToken.transfer(TEST3_NAME, 10, multisigWallet.address);
+    await kumaToken.transfer(TEST2_NAME, 10, multisigWallet.address);
 
-    let test2Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST2_NAME);
+    let test4Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST2_NAME);
 
-    await multisig.requestTransfer(TEST1_NAME, 10, multisigContract.address, test2Wallet.address);
+    await multisig.requestTransfer(TEST1_NAME, 10, multisigContract.address, test4Wallet.address);
 
-    test2Wallet = await kumaToken.retrieveWallet(TEST3_NAME, test2Wallet.address);
-    expect(test2Wallet.amount).toBe(test2Wallet.amount + 10);
+    test4Wallet = await kumaToken.retrieveWallet(TEST4_NAME, test4Wallet.address);
+    expect(test4Wallet.amount).toBe(test4Wallet.amount + 10);
 
     multisigWallet = await kumaToken.retrieveWallet(TEST1_NAME, multisigContract.walletAddress);
     expect(multisigWallet.amount).toBe(10);
