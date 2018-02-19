@@ -1,6 +1,6 @@
-const fs = require('fs-extra');
-const path = require('path');
 const testSetup = require('../test/testSetup');
+const cleanupUsers = require('../test/cleanupUsers');
+
 const kumaToken = require('./kuma-token');
 const createUser = require('./../utils/create-user');
 
@@ -9,25 +9,16 @@ const TEST2_NAME = 'kuma-token-test2';
 
 const DEFAULT_AMOUNT = 1000;
 
-let testUser1;
-let testUser2;
-
 beforeAll(testSetup);
 beforeAll(async () => {
     // create 2 test-users
-    testUser1 = await createUser({name: TEST1_NAME});
-    testUser2 = await createUser({name: TEST2_NAME});
+    await createUser({name: TEST1_NAME});
+    await createUser({name: TEST2_NAME});
 });
 
 afterAll(async () => {
     // cleanup test-users
-    for (const user of [testUser1, testUser2]) {
-        console.log(`Cleaning up user ${user.name}`);
-        await fs.remove(path.resolve(__dirname, `../../network/generated/crypto-config/auth.kunstmaan.be/users/${user.name}.auth.kunstmaan.be/`));
-        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.name}`));
-        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.enrollment.signingIdentity}-priv`));
-        await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.enrollment.signingIdentity}-pub`));
-    }
+    await cleanupUsers([TEST1_NAME, TEST2_NAME]);
 });
 
 test('ping to check if the service is running', async () => {
