@@ -109,7 +109,7 @@ test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', a
     await kumaToken.transfer(TEST1_NAME, 10, multisigWallet.address);
     await kumaToken.transfer(TEST2_NAME, 10, multisigWallet.address);
 
-    let test4Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST2_NAME);
+    let test4Wallet = await kumaToken.retrieveOrCreateWalletFor(TEST4_NAME);
 
     await multisig.requestTransfer(TEST1_NAME, 10, multisigContract.address, test4Wallet.address);
 
@@ -120,5 +120,4 @@ test('create a 1-2 multisig wallet and transfer 10 coins, no approval needed', a
     expect(multisigWallet.amount).toBe(10);
 });
 
-// signle user test
 // too many signatures needed
