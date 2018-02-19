@@ -42,7 +42,7 @@ PREGEN_CAs:
   # They both will contain the same certificates. This is done for ease of programming.
 
   - ca: &KUMA_CA
-      Domain: &KumaDomain kunstmaan.be
+      Domain: kunstmaan.be
       Port: 7054
 
 # This section defines the organisations that are part of the hyperledger fabric network
@@ -99,12 +99,14 @@ PREGEN_CAs:
 
 Orgs:
   - &KumaOrg
-    Name: &KumaName Kunstmaan
-    Domain: *KumaDomain
-    ca: *KUMA_CA
-    tlsca: &KUMA_TLSCA
+    Name: &KumaOrgName KunstmaanOrg
+    Domain: &KumaDomain org.kunstmaan.be
+    ca:
+      Parent: *KUMA_CA
       Domain: *KumaDomain
-      Port: 7054
+    tlsca:
+      Parent: *KUMA_CA
+      Domain: *KumaDomain
     peers:
       - Hostname: &KumaPeer kumapeer
         Ports:
@@ -120,26 +122,26 @@ Orgs:
         Port: 7050
         AdminOrgs:
           # Must be a subset of the consortiums
-          - *KumaName
+          - *KumaOrgName
         Consortiums:
           # Refers to consortium name
           - &KunstmaanConsortium
             Name: KunstmaanConsortium
             Organizations:
-                - *KumaName
-                - Auth
+                - *KumaOrgName
+                - KunstmaanAuth
         Channels:
           - &kumachannel kumachannel
     admins:
       - Hostname: admin-kuma
 
-  - Name: &AuthName Auth
+  - Name: &KumaAuthName KunstmaanAuth
     Domain: &AuthDomain auth.kunstmaan.be
-    ca: &AUTH_CA
+    ca:
       Parent: *KUMA_CA
       Domain: *AuthDomain
-    tlsca: &AUTH_TLSCA
-      Parent: *KUMA_TLSCA
+    tlsca:
+      Parent: *KUMA_CA
       Domain: *AuthDomain
     peers:
       - Hostname: &AuthPeer authpeer
@@ -175,8 +177,8 @@ Channels:
   - Name: *kumachannel
     Consortium: *KunstmaanConsortium
     Organizations:
-      - *KumaName
-      - *AuthName
+      - *KumaOrgName
+      - *KumaAuthName
 
 # This section is for the development mode. It will create a simplified version
 # of the network. This should point to the structure of an organisation with at least a peer and an orderer.
