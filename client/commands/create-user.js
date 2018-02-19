@@ -10,7 +10,7 @@ module.exports.handler = function(argv) {
 
     return commandExists('kuma-hf-network').catch(() => {
 
-        throw new Error('make sure kuma-hf-network is installed https://github.com/Kunstmaan/hyperledger-fabric-network-setup');
+        throw new Error('make sure kuma-hf-network is installed, see: https://github.com/Kunstmaan/hyperledger-fabric-network-setup');
     }).then(() => {
 
         return new Promise((fulfill, reject) => {
