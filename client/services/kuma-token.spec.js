@@ -22,6 +22,7 @@ beforeAll(async () => {
 afterAll(async () => {
     // cleanup test-users
     for (const user of [testUser1, testUser2]) {
+        console.log(`Cleaning up user ${user.name}`);
         await fs.remove(path.resolve(__dirname, `../../network/generated/crypto-config/auth.kunstmaan.be/users/${user.name}.auth.kunstmaan.be/`));
         await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.name}`));
         await fs.remove(path.resolve(__dirname, `../../network/generated/hfc-key-store/${user.enrollment.signingIdentity}-priv`));
