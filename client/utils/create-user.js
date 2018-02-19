@@ -29,7 +29,7 @@ module.exports = function({name, verbose = false}) {
                 }
 
                 fs.readFile(path.resolve(__dirname, `../../network/generated/hfc-key-store/${name}`)).then((fileContents) => {
-                    fulfill(fileContents);
+                    fulfill(JSON.parse(fileContents));
                 }).catch(reject);
             });
         });
