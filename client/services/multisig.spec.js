@@ -22,7 +22,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
     // cleanup test-users
-    cleanupUsers([TEST1_NAME, TEST2_NAME, TEST3_NAME, TEST4_NAME]);
+    await cleanupUsers([TEST1_NAME, TEST2_NAME, TEST3_NAME, TEST4_NAME]);
 });
 
 test('ping to check if the service is running', async () => {
