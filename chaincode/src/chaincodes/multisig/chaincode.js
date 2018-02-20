@@ -154,6 +154,26 @@ const MultisigChaincode = class extends ChaincodeBase {
      * @param {TransactionHelper} txHelper
      * @param {String} transferId the id of the transaction request
      */
+    async getTransfer(stub, txHelper, transferId) {
+        if (!isUUID(CONSTANTS.PREFIXES.MULTISIG_REQUEST, transferId)) {
+
+            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
+                'param': 'transferId',
+                'value': transferId,
+                'expected': 'multisig transfer id'
+            });
+        }
+
+        const multisigTransferRequest = await txHelper.getStateAsObject(transferId);
+
+        return multisigTransferRequest;
+    }
+
+    /**
+     * @param {Stub} stub
+     * @param {TransactionHelper} txHelper
+     * @param {String} transferId the id of the transaction request
+     */
     async approveTransfer(stub, txHelper, transferId) {
         if (!isUUID(CONSTANTS.PREFIXES.MULTISIG_REQUEST, transferId)) {
 

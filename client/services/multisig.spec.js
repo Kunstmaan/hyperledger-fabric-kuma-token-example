@@ -54,6 +54,9 @@ test(`create a 2-3 multisig wallet and send 10 coins to ${TEST3_NAME}`, async ()
 
     const transfer = await multisig.requestTransfer(TEST1_NAME, 10, multisigContract.address, test3Wallet.address);
 
+    const returnedTransfer = await multisig.getTransfer(TEST1_NAME, transfer.id);
+    expect(returnedTransfer).toMatchObject(transfer);
+
     multisigWallet = await kumaToken.retrieveWallet(TEST1_NAME, multisigContract.walletAddress);
     expect(multisigWallet.amount).toBe(20);
 

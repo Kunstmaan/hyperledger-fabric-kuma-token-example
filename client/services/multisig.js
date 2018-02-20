@@ -36,11 +36,20 @@ module.exports = baseService(
                     userId
                 });
             },
-            approveTransfer: (userId, requestId) => {
+            getTransfer: (userId, transferId) => {
+                return invoke({
+                    chaincode: {
+                        fcn: 'getTransfer',
+                        args: [transferId]
+                    },
+                    userId
+                });
+            },
+            approveTransfer: (userId, transferId) => {
                 return invoke({
                     chaincode: {
                         fcn: 'approveTransfer',
-                        args: [requestId]
+                        args: [transferId]
                     },
                     userId
                 });
