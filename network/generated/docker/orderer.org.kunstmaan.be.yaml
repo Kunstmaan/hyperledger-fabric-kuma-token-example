@@ -1,0 +1,39 @@
+
+version: '2'
+
+# This file has been auto-generated
+
+services:
+  orderer.org.kunstmaan.be:
+    image:        hyperledger/fabric-orderer
+    container_name: orderer.org.kunstmaan.be
+    ports:
+      - 7050:7050
+    working_dir:  /opt/gopath/src/github.com/hyperledger/fabric/orderers
+    command:      orderer
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    environment:
+        - ORDERER_GENERAL_LOGLEVEL=debug
+        - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+        - ORDERER_GENERAL_GENESISMETHOD=file
+        - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/orderer.org.kunstmaan.be.genesis.block
+        - ORDERER_GENERAL_LOCALMSPID=OrgKunstmaanBeMSP
+        - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/crypto-config/orderer/msp
+        - ORDERER_GENERAL_TLS_ENABLED=true
+        - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/crypto-config/orderer/tlsca/tlsca.orderer.org.kunstmaan.be-cert.pem,/etc/hyperledger/crypto-config/kumapeer.org.kunstmaan.be/tlsca/tlsca.kumapeer.org.kunstmaan.be-cert.pem]
+        - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/crypto-config/orderer/tlsca/tlsca.orderer.org.kunstmaan.be-key.pem
+        - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/crypto-config/orderer/tlsca/tlsca.orderer.org.kunstmaan.be-cert.pem
+    volumes:
+        - /vagrant/channel/:/etc/hyperledger/configtx
+        - /vagrant/crypto-config/org.kunstmaan.be/orderers/orderer.org.kunstmaan.be/:/etc/hyperledger/crypto-config/orderer
+        - /vagrant/crypto-config/org.kunstmaan.be/peers/kumapeer.org.kunstmaan.be/:/etc/hyperledger/crypto-config/kumapeer.org.kunstmaan.be
+
+networks:
+  default:
+    external:
+      name: hyperledgerNet
+
