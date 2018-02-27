@@ -1,0 +1,45 @@
+{
+  "GOPATH": "../artifacts", 
+  "channel": "kumachannel", 
+  "eventWaitTime": "30000", 
+  "host": "localhost", 
+  "keyValueStore": "/tmp/fabric-client-kvs", 
+  "mysql": {
+    "database": "fabricexplorer", 
+    "host": "mysql", 
+    "passwd": "password", 
+    "port": "3306", 
+    "username": "root"
+  }, 
+  "network-config": {
+    "org1": {
+      "admin": {
+        "cert": "/crypto-config/org.kunstmaan.be/users/admin-kuma.org.kunstmaan.be/msp/signcerts", 
+        "key": "/crypto-config/org.kunstmaan.be/users/admin-kuma.org.kunstmaan.be/msp/keystore"
+      }, 
+      "mspid": "OrgKunstmaanBeMSP", 
+      "name": "org.kunstmaan.be", 
+      "peer1": {
+        "events": "grpcs://kumapeer.org.kunstmaan.be:7053", 
+        "requests": "grpcs://kumapeer.org.kunstmaan.be:7051", 
+        "server-hostname": "kumapeer.org.kunstmaan.be", 
+        "tls_cacerts": "/crypto-config/org.kunstmaan.be/peers/kumapeer.org.kunstmaan.be/tlsca.combined.kumapeer.org.kunstmaan.be-cert.pem"
+      }
+    }, 
+    "org2": {
+      "admin": {
+        "cert": "/crypto-config/auth.kunstmaan.be/users/admin-auth.auth.kunstmaan.be/msp/signcerts", 
+        "key": "/crypto-config/auth.kunstmaan.be/users/admin-auth.auth.kunstmaan.be/msp/keystore"
+      }, 
+      "mspid": "AuthKunstmaanBeMSP", 
+      "name": "auth.kunstmaan.be", 
+      "peer1": {
+        "events": "grpcs://authpeer.auth.kunstmaan.be:7053", 
+        "requests": "grpcs://authpeer.auth.kunstmaan.be:7051", 
+        "server-hostname": "authpeer.auth.kunstmaan.be", 
+        "tls_cacerts": "/crypto-config/auth.kunstmaan.be/peers/authpeer.auth.kunstmaan.be/tlsca.combined.authpeer.auth.kunstmaan.be-cert.pem"
+      }
+    }
+  }, 
+  "port": "8080"
+}

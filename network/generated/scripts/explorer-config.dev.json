@@ -1,0 +1,31 @@
+{
+  "GOPATH": "../artifacts", 
+  "channel": "kumachannel", 
+  "eventWaitTime": "30000", 
+  "host": "localhost", 
+  "keyValueStore": "/tmp/fabric-client-kvs", 
+  "mysql": {
+    "database": "fabricexplorer", 
+    "host": "mysql", 
+    "passwd": "password", 
+    "port": "3306", 
+    "username": "root"
+  }, 
+  "network-config": {
+    "org1": {
+      "admin": {
+        "cert": "/crypto-config/org.kunstmaan.be/users/admin-kuma.org.kunstmaan.be/msp/signcerts", 
+        "key": "/crypto-config/org.kunstmaan.be/users/admin-kuma.org.kunstmaan.be/msp/keystore"
+      }, 
+      "mspid": "OrgKunstmaanBeMSP", 
+      "name": "org.kunstmaan.be", 
+      "peer1": {
+        "events": "grpc://peer:7051", 
+        "requests": "grpc://peer:7051", 
+        "server-hostname": "peer", 
+        "tls_cacerts": "/crypto-config/org.kunstmaan.be/peers/kumapeer.org.kunstmaan.be/tlsca.combined.kumapeer.org.kunstmaan.be-cert.pem"
+      }
+    }
+  }, 
+  "port": "8080"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "admin-auth",
+  "mspid": "AuthKunstmaanBeMSP",
+  "roles": null,
+  "affiliation": "",
+  "enrollmentSecret": "",
+  "enrollment": {
+    "signingIdentity": "582dc8d5986a1e94a59ccf4944a043a60c074cc782a300dc092c6f2b8324b1f8",
+    "identity": {
+      "certificate": "-----BEGIN CERTIFICATE-----\nMIICFDCCAbugAwIBAgIJAOBUjMHShpNzMAkGByqGSM49BAEwTDELMAkGA1UEBhMC\nYmUxEjAQBgNVBAoMCWt1bnN0bWFhbjENMAsGA1UECwwEYXV0aDEaMBgGA1UEAwwR\nYXV0aC5rdW5zdG1hYW4uYmUwHhcNMTgwMjI3MTcwMDEyWhcNMjgwMjI1MTcwMDEy\nWjBXMQswCQYDVQQGEwJiZTESMBAGA1UECgwJa3Vuc3RtYWFuMQ0wCwYDVQQLDARh\ndXRoMSUwIwYDVQQDDBxhZG1pbi1hdXRoLmF1dGgua3Vuc3RtYWFuLmJlMFkwEwYH\nKoZIzj0CAQYIKoZIzj0DAQcDQgAEbfNwv7eEWFjzhlz/gE64MKdF3KcHdBOrUQoI\nbQVZaw/0j5o0x0OimBMSn/fZsGkxSKrY79iiWBGzkohQ1eN1TqN8MHowGgYIKgME\nBQYHCAEEDgwMeyJhdHRycyI6e319MB8GA1UdIwQYMBaAFG+tmW/Wok8XOgb8SLge\nYvpafYQFMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFN3AL6sFT2OUH6asMVmegE+Q\nPEbHMA4GA1UdDwEB/wQEAwIHgDAJBgcqhkjOPQQBA0gAMEUCIDv0Fz5OZO2pTUK1\nuc/sCYxFWg1O7B2dpEw2WEOvJEfbAiEAlnK98UJ+KmJuQz5uyiia6yf40zieu/Vq\neOSe/JhN12M=\n-----END CERTIFICATE-----\n"
+    }
+  }
+}
+
