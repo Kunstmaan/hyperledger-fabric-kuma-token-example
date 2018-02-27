@@ -1,15 +1,16 @@
 {
     "region": "eu-west-1",
     "availability_zone": "b",
-    "security_groups": ["sg-01234567"],
-    "subnet_id": "subnet-01234567",
-    "keypair_name": "blockchain",
-    "private_key_path": "~/.ssh/blockchain.pem",
+    "security_groups": ["sg-de45daa4"],
+    "subnet_id": "subnet-b4a561d2",
+    "keypair_name": "kuma-token",
+    "private_key_path": "~/.ssh/kuma-token.pem",
     "ssh_username": "ubuntu",
-    "consul_master_ip": "10.42.1.4",
-    "chaincode_github": "git@github.com:Kunstmaan/hyperleder-fabric-kuma-token-example.git",
-    "private_ssh_key_for_chaincode_repo": "~/.ssh/user",
-    "public_ssh_key_for_chaincode_repo": "~/.ssh/user.pem",
+    "consul_master_ip": "10.41.0.4",
+    "chaincode_repository": "git@github.com:Kunstmaan/hyperleder-fabric-kuma-token-example.git",
+    "chaincode_path": "./chaincode",
+    "private_ssh_key_for_chaincode_repo": "~/.ssh/id_rsa",
+    "public_ssh_key_for_chaincode_repo": "~/.ssh/id_rsa.pub",
     "ec2s": {
         "kuma-node": {
             "ami_id": "ami-785db401",
@@ -28,8 +29,8 @@
                     "docker": "tools.kunstmaan.be.yaml"
                 }
             ],
-            "ip": "10.42.1.4",
-            "memory_size": 15
+            "ip": "10.41.0.4",
+            "volume_size": 15
         }
     }
 }
