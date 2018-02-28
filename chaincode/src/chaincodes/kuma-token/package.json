@@ -24,10 +24,11 @@
             "instantiateArgs": [],
             "endorsementPolicy": "OR('KunstmaanOrg.member')",
             "peers": [
-                "kumapeer.kunstmaan.be"
+                "kumapeer.org.kunstmaan.be"
             ],
             "orderer": {
-                "host": "orderer.kunstmaan.be",
+                "org": "org.kunstmaan.be",
+                "host": "orderer.org.kunstmaan.be",
                 "port": 7050
             }
         }
