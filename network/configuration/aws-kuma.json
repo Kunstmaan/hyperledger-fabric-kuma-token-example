@@ -8,7 +8,7 @@
     "ssh_username": "ubuntu",
     "consul_master_ip": "10.41.0.5",
     "chaincode_repository": "git@github.com:Kunstmaan/hyperleder-fabric-kuma-token-example.git",
-    "chaincode_path": "./chaincode",
+    "chaincode_base_path": "./chaincode",
     "chaincode_build": true,
     "private_ssh_key_for_chaincode_repo": "~/.ssh/id_rsa",
     "public_ssh_key_for_chaincode_repo": "~/.ssh/id_rsa.pub",
