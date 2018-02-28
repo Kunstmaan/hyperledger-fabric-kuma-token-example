@@ -22,7 +22,7 @@
         {
             "channelId": "kumachannel",
             "instantiateArgs": [],
-            "endorsementPolicy": "OR('KunstmaanOrg.member')",
+            "endorsementPolicy": "AND('OrgKunstmaanBeMSP.member')",
             "peers": [
               "kumapeer.org.kunstmaan.be"
             ],

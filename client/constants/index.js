@@ -2,7 +2,7 @@ const path = require('path');
 
 const constants = {
     'CHANNEL_ID': 'kumachannel',
-    'KEYSTORE_PATH': path.resolve(__dirname, '../../network/generated/hfc-key-store'),
+    'KEYSTORE_PATH': path.resolve(__dirname, '../../network/generated/hfc-key-store')
 };
 
 if (process.env.NODE_ENV.toLowerCase() === 'prod') {
