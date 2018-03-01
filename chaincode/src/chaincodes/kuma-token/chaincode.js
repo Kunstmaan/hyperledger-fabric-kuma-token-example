@@ -8,10 +8,7 @@ const AbstractWallet = require('./models/AbstractWallet');
 const UserWallet = require('./models/UserWallet');
 const ContractWallet = require('./models/ContractWallet');
 
-const isArray = require('./common/validators/isArray');
-const isFloat = require('./common/validators/isFloat');
-const isUUID = require('./common/validators/isUUID');
-const isString = require('./common/validators/isString');
+const Joi = require('./common/services/joi');
 
 const KumaTokenChaincode = class extends ChaincodeBase {
 
@@ -24,30 +21,20 @@ const KumaTokenChaincode = class extends ChaincodeBase {
      *                 If undefined, will be set to the caller's wallet
      */
     async transfer(stub, txHelper, amount, toAddress, fromAddress = undefined) {
-        if (!isFloat(amount) || amount < 0) {
+        const schema = Joi.object().keys({
+            amount: Joi.number().required().positive(),
+            toAddress: Joi.string().required().walletId(),
+            fromAddress: Joi.string().optional().walletId()
+        });
 
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'amount',
-                'value': amount,
-                'expected': 'positive float'
+        try {
+            await schema.validate({
+                amount, toAddress, fromAddress
             });
-        }
-
-        if (!isUUID(CONSTANTS.PREFIXES.WALLET, toAddress)) {
-
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'toAddress',
-                'value': toAddress,
-                'expected': 'address'
-            });
-        }
-
-        if (fromAddress && !isUUID(CONSTANTS.PREFIXES.WALLET, fromAddress)) {
-
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'fromAddress',
-                'value': fromAddress,
-                'expected': 'address'
+        } catch (error) {
+            throw new ChaincodeError(ERRORS.VALIDATION, {
+                'message': error.message,
+                'details': error.details
             });
         }
 
@@ -111,12 +98,18 @@ const KumaTokenChaincode = class extends ChaincodeBase {
      * @param {String} address
      */
     async retrieveWallet(stub, txHelper, address) {
-        if (!isUUID(CONSTANTS.PREFIXES.WALLET, address)) {
+        const schema = Joi.object().keys({
+            address: Joi.string().required().walletId()
+        });
 
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'address',
-                'value': address,
-                'expected': 'address'
+        try {
+            await schema.validate({
+                address
+            });
+        } catch (error) {
+            throw new ChaincodeError(ERRORS.VALIDATION, {
+                'message': error.message,
+                'details': error.details
             });
         }
 
@@ -149,21 +142,20 @@ const KumaTokenChaincode = class extends ChaincodeBase {
      * @param {Array} chaincodeFunctions (optional)
      */
     async createContractWallet(stub, txHelper, chaincodeName, chaincodeFunctions) {
-        if (!isString(chaincodeName)) {
+        const schema = Joi.object().keys({
+            chaincodeName: Joi.string().required(),
+            chaincodeFunctions: Joi.array().required().items(Joi.string()).min(1)
+        });
 
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'chaincodeName',
-                'value': chaincodeName,
-                'expected': 'string'
+        try {
+            await schema.validate({
+                chaincodeName,
+                chaincodeFunctions
             });
-        }
-
-        if (chaincodeFunctions && (!isArray(chaincodeFunctions) || chaincodeFunctions.length === 0 || !chaincodeFunctions.every((chaincodeFunction) => isString(chaincodeFunction)))) {
-
-            throw new ChaincodeError(ERRORS.TYPE_ERROR, {
-                'param': 'chaincodeFunctions',
-                'value': chaincodeFunctions,
-                'expected': 'string array'
+        } catch (error) {
+            throw new ChaincodeError(ERRORS.VALIDATION, {
+                'message': error.message,
+                'details': error.details
             });
         }
 

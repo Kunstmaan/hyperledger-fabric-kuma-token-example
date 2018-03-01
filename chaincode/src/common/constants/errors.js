@@ -2,7 +2,7 @@
 module.exports = {
     UNKNOWN_ENTITY: 'unknown_entity',
     UNKNOWN_ERROR: 'unknown_error',
-    TYPE_ERROR: 'type_error',
+    VALIDATION: 'validation',
     NOT_PERMITTED: 'not_permitted',
 
     INSUFFICIENT_FUNDS: 'insufficient_funds',
