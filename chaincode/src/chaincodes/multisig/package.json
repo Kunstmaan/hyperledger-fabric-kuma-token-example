@@ -24,7 +24,7 @@
             "instantiateArgs": [],
             "endorsementPolicy": "AND('OrgKunstmaanBeMSP.member')",
             "peers": [
-              "kumapeer.org.kunstmaan.be"
+                "kumapeer.org.kunstmaan.be"
             ],
             "orderer": {
                 "org": "org.kunstmaan.be",
