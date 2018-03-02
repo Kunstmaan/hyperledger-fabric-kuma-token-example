@@ -4,7 +4,7 @@
   "description": "A CLI application to communicate with the kuma-token chaincode.",
   "main": "cli.js",
   "scripts": {
-    "test": "jest services/"
+    "test": "jest services/ --runInBand"
   },
   "author": "Kunstmaan",
   "license": "MIT",
