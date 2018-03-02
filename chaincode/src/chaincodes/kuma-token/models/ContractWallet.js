@@ -1,6 +1,6 @@
-const AbstractWallet = require('./AbstractWallet');
+const _ = require('lodash'); // eslint-disable-line
 
-const isArray = require('./../common/validators/isArray');
+const AbstractWallet = require('./AbstractWallet');
 
 const CONSTANTS = require('./../common/constants');
 
@@ -40,7 +40,7 @@ class UserWallet extends AbstractWallet {
     }
 
     txCreatorHasPermissions(txHelper) {
-        if (isArray(this.chaincodeFunctions)) {
+        if (_.isArray(this.chaincodeFunctions)) {
 
             return this.chaincodeFunctions.some((functionName) => txHelper.invokedByChaincode(this.chaincodeName, functionName));
         }

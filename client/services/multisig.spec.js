@@ -132,7 +132,7 @@ test('create a 3-2 multisig wallet, this should not work', async () => {
     await multisig.createMultisigContract(TEST1_NAME, publicKeys, 3).then(() => {
         expect('should have thrown an error').toBeFalsy();
     }).catch((err) => {
-        expect(err.key).toEqual('type_error');
-        expect(err.data.param).toEqual('signaturesNeeded');
+        expect(err.key).toEqual('validation');
+        expect(err.data.details[0].type).toEqual('number.max');
     });
 });
