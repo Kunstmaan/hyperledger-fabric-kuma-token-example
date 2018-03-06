@@ -159,6 +159,7 @@ const KumaTokenChaincode = class extends ChaincodeBase {
             });
         }
 
+
         return new ContractWallet({
             chaincodeName,
             chaincodeFunctions,
