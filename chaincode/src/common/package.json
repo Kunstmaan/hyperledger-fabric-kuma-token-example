@@ -9,8 +9,8 @@
     "author": "Kunstmaan",
     "license": "MIT",
     "dependencies": {
-        "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.3.0",
-        "fabric-shim": "git+https://github.com/daanporon/fabric-shim.git",
+        "@kunstmaan/hyperledger-fabric-node-chaincode-utils": "^0.4.0",
+        "fabric-shim": "1.2.0",
         "joi": "^13.1.2",
         "lodash": "^4.17.5"
     }

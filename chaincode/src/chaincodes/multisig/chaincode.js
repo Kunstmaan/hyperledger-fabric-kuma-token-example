@@ -238,4 +238,4 @@ const MultisigChaincode = class extends ChaincodeBase {
 
 };
 
-shim.start(new MultisigChaincode());
+shim.start(new MultisigChaincode(shim));
