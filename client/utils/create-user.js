@@ -12,7 +12,7 @@ module.exports = function({name, verbose = false}) {
 
         return new Promise((fulfill, reject) => {
 
-            exec(`kuma-hf-network generate-user ${name} KunstmaanAuth ./configuration/crypto_config-kuma.yaml --attributes name=${name}`, {
+            exec(`kuma-hf-network generate-user ${name} KunstmaanAuth ./../network/configuration/crypto_config.yaml --attributes name=${name}`, {
                 cwd: path.resolve(__dirname, '../../network'),
                 env: process.env,
                 encoding: 'utf8',
