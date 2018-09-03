@@ -17,7 +17,7 @@
     "author": "Kunstmaan",
     "license": "MIT",
     "dependencies": {
-      "@kunstmaan/hyperledger-fabric-chaincode-dev-setup": "^0.4.2"
+        "@kunstmaan/hyperledger-fabric-chaincode-dev-setup": "^0.6.1"
     },
     "devDependencies": {
         "jest": "^22.3.0",
