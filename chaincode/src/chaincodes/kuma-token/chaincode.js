@@ -203,4 +203,4 @@ const KumaTokenChaincode = class extends ChaincodeBase {
 
 };
 
-shim.start(new KumaTokenChaincode());
+shim.start(new KumaTokenChaincode(shim));
