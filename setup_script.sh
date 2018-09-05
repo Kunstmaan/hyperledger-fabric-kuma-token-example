@@ -138,15 +138,24 @@ if ! groups | grep -q docker; then
     exit 0
 fi
 
+
+pull_and_tag() {
+    image=$1
+    shortTag=$(echo $image | cut -d":" -f1)
+    docker pull $image
+    docker tag $image $shortTag
+}
+
 puts "Pulling docker images..."
-docker pull "hyperledger/fabric-couchdb:$COUCHDB_VERSION" &
-docker pull "hyperledger/fabric-ccenv:x86_64-$HYPERLEDGER_VERSION" &
-docker pull "hyperledger/fabric-peer:x86_64-$HYPERLEDGER_VERSION" &
-docker pull "hyperledger/fabric-orderer:x86_64-$HYPERLEDGER_VERSION" &
-docker pull "hyperledger/fabric-tools:x86_64-$HYPERLEDGER_VERSION" &
-docker pull "hyperledger/fabric-ccenv:x86_64-$HYPERLEDGER_VERSION" &
-docker pull "hyperledger/fabric-baseimage:x86_64-$HYPERLEDGER_BASE_VERSION" &
+pull_and_tag "hyperledger/fabric-couchdb:$COUCHDB_VERSION" &
+pull_and_tag "hyperledger/fabric-ccenv:x86_64-$HYPERLEDGER_VERSION" &
+pull_and_tag "hyperledger/fabric-peer:x86_64-$HYPERLEDGER_VERSION" &
+pull_and_tag "hyperledger/fabric-orderer:x86_64-$HYPERLEDGER_VERSION" &
+pull_and_tag "hyperledger/fabric-tools:x86_64-$HYPERLEDGER_VERSION" &
+pull_and_tag "hyperledger/fabric-ccenv:x86_64-$HYPERLEDGER_VERSION" &
+pull_and_tag "hyperledger/fabric-baseimage:x86_64-$HYPERLEDGER_BASE_VERSION" &
 wait
+
 
 # normal_user="$1"
 #
