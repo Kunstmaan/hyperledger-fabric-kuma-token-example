@@ -48,16 +48,6 @@ if [ "$#" -lt 0 ]; then
     abort
 fi
 
-if [ "$(uname)" != 'Linux' ]; then
-    err "Not running on linux"
-    abort
-else
-    if ! groups | grep -q "root"; then
-        err "Must run as root."
-        abort
-    fi
-fi
-
 sudo apt-get update
 
 if command -v wget > /dev/null 2>&1; then puts "wget is already installed. Skipping..."; else {
