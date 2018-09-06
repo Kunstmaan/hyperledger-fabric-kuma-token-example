@@ -91,6 +91,7 @@ if command -v docker-compose > /dev/null 2>&1; then puts "Docker-compose is alre
     curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-Linux-x86_64 | sudo tee /usr/local/bin/docker-compose > /dev/null
     sudo chmod +x /usr/local/bin/docker-compose
     sudo chmod 755 /usr/local/bin/docker-compose
+    sudo chown $USER:$USER /usr/local/bin/docker-compose
     puts "Done."
 }; fi
 
