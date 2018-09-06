@@ -191,16 +191,14 @@ with open(CONF_FILE) as chaincodes_stream:
 
                     if chaincode_language == "node":
                         # Path for node must be absolute
-                        print "Using node"
                         chaincode_path = absolute_chaincode_path
                     elif chaincode_language == "golang":
                         # Path for golang must be relative to $GOPATH/src
                         chaincode_path = 'chaincodes/' + chaincode_path
-                        print "Using go"
                     else:
                         fail("Unknown chaincode language " + chaincode_language + " ! Aborting.")
 
-                    info = "chaincode " + chaincode_name + " version " + chaincode_version + " at " + chaincode_path
+                    info = chaincode_language + " chaincode " + chaincode_name + " version " + chaincode_version + " at " + chaincode_path
 
                     for net_config in chaincode["hf-network"]:
                         channel_id = net_config["channelId"]
