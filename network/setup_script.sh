@@ -156,18 +156,3 @@ pull_and_tag "hyperledger/fabric-tools:x86_64-$HYPERLEDGER_VERSION" &
 pull_and_tag "hyperledger/fabric-ccenv:x86_64-$HYPERLEDGER_VERSION" &
 pull_and_tag "hyperledger/fabric-baseimage:x86_64-$HYPERLEDGER_BASE_VERSION" &
 wait
-
-
-# normal_user="$1"
-#
-#
-# sudo -u $normal_user bash << EOF
-# REPO="hyperleder-fabric-kuma-token-example"
-# # Setup the training example
-# if [ ! -d "$REPO" ]; then
-#     git clone https://github.com/GLeurquin/$REPO.git
-# fi
-# cd $REPO
-# npm install --prefix client
-# npm install --prefix chaincode
-# EOF
