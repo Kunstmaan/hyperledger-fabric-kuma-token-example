@@ -263,8 +263,7 @@ build_chaincode() {
 }
 
 build_chaincodes() {
-    increase_version_of_chaincode="$1" # Chaincode for which the versin must be icnrease. Watch mode only
-    mkdir -p "$BUILD_DIR"
+    increase_version_of_chaincode="$1" # Chaincode for which the version must be increase.
 
     CPWD=$(pwd)
     cd $CHAINCODES_DIR
@@ -556,6 +555,9 @@ elif [ $COMMAND == "start" ]; then
         restore_archive
     fi
 
+    # Create build folder before docker starts,
+    # otherwise docker will set root permissions on the volume
+    mkdir -p "$BUILD_DIR"
     start_blockchain
 elif [ $COMMAND = "update" ]; then
     update_chaincodes
