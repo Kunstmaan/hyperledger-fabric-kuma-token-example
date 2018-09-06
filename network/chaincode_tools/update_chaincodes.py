@@ -33,17 +33,23 @@ args = PARSER.parse_args()
 DRYRUN = args.dryrun
 
 CHAINCODE_BASE_PATH = os.path.normpath(os.path.join(os.environ['GOPATH'] + '/src', args.chaincodeBasePath))
-CONF_FILE = CHAINCODE_BASE_PATH + '/build/chaincodes.json'
+CHAINCODE_CONF_FILE = CHAINCODE_BASE_PATH + '/build/chaincodes.json'
 CONF_IS_JSON_PACKAGE = False
 
-if not os.path.isfile(CONF_FILE):
+if not os.path.isfile(CHAINCODE_CONF_FILE):
     CONF_FILE = CHAINCODE_BASE_PATH + '/package.json'
     CONF_IS_JSON_PACKAGE = True
+else:
+    CONF_FILE = CHAINCODE_CONF_FILE
 
 def fail(msg):
     """Prints the error message and exits"""
     sys.stderr.write(msg)
     exit(1)
+
+if not os.path.isfile(CONF_FILE):
+    fail('Could not find configuration file {} nor {}'.format(CONF_FILE, CHAINCODE_CONF_FILE))
+
 
 def call(script, *args):
     """Calls the given script using the args"""
@@ -88,12 +94,12 @@ def compile_chaincode(data):
     """Compiles the chaincode"""
     if data['chaincode_language'] == "golang":
         call("/etc/hyperledger/chaincode_tools/compile_chaincode.sh", data['chaincode_path'])
-        return "==> Compiled " + data['info'] + "!"
+        return "---> Compiled " + data['info'] + "!"
     elif data['chaincode_language'] == "node":
         if not os.path.isdir(data['chaincode_path'] + '/node_modules') or args.forceNpmInstall:
             call("npm", "install", "--prefix", data['chaincode_path'])
-            return "==> Installed NPM for " + data['info'] + "!"
-        return "==> Skipped NPM install for " + data['info'] + "!"
+            return "---> Installed NPM for " + data['info'] + "!"
+        return "---> Skipped NPM install for " + data['info'] + "!"
 
 def install_chaincode(data):
     """Installs chaincode on all the peers"""
@@ -107,8 +113,8 @@ def install_chaincode(data):
              "--path", data['chaincode_path'],
              "--lang", data['chaincode_language']
             )
-        return "==> Installed " + data['info'] + " on " + data['peer'] + "!"
-    return "==> " + data['info'] + " is already installed on " + data['peer'] + "!"
+        return "---> Installed " + data['info'] + " on " + data['peer'] + "!"
+    return "---> " + data['info'] + " is already installed on " + data['peer'] + "!"
 
 def source_peer(peer):
     """Sets environment variables for that peer"""
@@ -141,9 +147,9 @@ def instantiate_chaincode(data):
             )
 
         if upgrade:
-            return "==> Upgraded " + info + " on " + data['peer'] + "!"
-        return "==> Instantiated " + info + " on " + data['peer'] + "!"
-    return "==> " + info + " is already instantiated on " + data['peer'] + "!"
+            return "---> Upgraded " + info + " on " + data['peer'] + "!"
+        return "---> Instantiated " + info + " on " + data['peer'] + "!"
+    return "---> " + info + " is already instantiated on " + data['peer'] + "!"
 
 def format_args(args):
     """Formats the args with escaped " """
@@ -237,7 +243,7 @@ with open(CONF_FILE) as chaincodes_stream:
                 except ValueError as exc:
                     print exc
 
-        func_mapping = [[compile_chaincode, COMPILE_DATA, "----> COMPILING..."], [install_chaincode, INSTALL_DATA, "----> INSTALLING..."], [instantiate_chaincode, INSTANTIATE_DATA, "----> INSTANTIATING..."]]
+        func_mapping = [[compile_chaincode, COMPILE_DATA, "==> COMPILING..."], [install_chaincode, INSTALL_DATA, "==> INSTALLING..."], [instantiate_chaincode, INSTANTIATE_DATA, "==> INSTANTIATING..."]]
         for func, the_data, info in func_mapping:
             print info
             pool = ThreadPool(10)

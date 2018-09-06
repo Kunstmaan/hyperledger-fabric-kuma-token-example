@@ -23,7 +23,6 @@ def call(script, *args):
     """Calls the given script using the args"""
 
     cmd = script + " " + " ".join(args)
-    print cmd
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     out, error = proc.communicate()
     if error != "":

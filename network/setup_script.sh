@@ -58,11 +58,11 @@ else
     fi
 fi
 
-apt-get update
+sudo apt-get update
 
 if command -v wget > /dev/null 2>&1; then puts "wget is already installed. Skipping..."; else {
   puts "Installing wget..."
-  apt-get install -y wget
+  sudo apt-get install -y wget
   puts "Done."
 }; fi
 
@@ -70,7 +70,7 @@ if command -v wget > /dev/null 2>&1; then puts "wget is already installed. Skipp
 if command -v docker > /dev/null 2>&1; then puts "Docker is already installed. Skipping..."; else {
   puts "Installing Docker..."
 
-  apt-get install -y \
+  sudo apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -78,22 +78,22 @@ if command -v docker > /dev/null 2>&1; then puts "Docker is already installed. S
 
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
-  add-apt-repository \
+  sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
 
-  apt-get update
+  sudo apt-get update
 
-  apt-get install -y docker-ce
-  usermod -a -G docker $USER
-  service docker start
+  sudo apt-get install -y docker-ce
+  sudo usermod -a -G docker $USER
+  sudo service docker start
   puts "Done."
 }; fi
 
 if command -v docker-compose > /dev/null 2>&1; then puts "Docker-compose is already installed. Skipping..."; else {
     puts "Installing Docker-compose..."
-    curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-Linux-x86_64 > /usr/local/bin/docker-compose
+    curl -L https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-Linux-x86_64 | sudo tee /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
     sudo chmod 755 /usr/local/bin/docker-compose
     puts "Done."
@@ -103,33 +103,34 @@ if command -v node > /dev/null 2>&1; then puts "NodeJs is already installed. Ski
     puts "Installing NodeJs..."
     NODE_FILE="node-v$NODEJS_VERSION-linux-x64.tar.gz"
     wget http://nodejs.org/dist/v$NODEJS_VERSION/$NODE_FILE
-    tar --strip-components 1 -xzvf $NODE_FILE -C /usr/local
-    ln -s /usr/local/bin/node /usr/bin/node
-    ln -s /usr/local/bin/npm /usr/bin/npm
+    sudo tar --strip-components 1 -xzvf $NODE_FILE -C /usr/local
+    sudo ln -s /usr/local/bin/node /usr/bin/node
+    sudo ln -s /usr/local/bin/npm /usr/bin/npm
+    rm -rfd $NODE_FILE
     puts "Done."
 }; fi
 
 if command -v git > /dev/null 2>&1; then puts "Git is already installed. Skipping..."; else {
     puts "Installing Git..."
-    apt-get install -y git
+    sudo apt-get install -y git
     puts "Done."
 }; fi
 
 if command -v python > /dev/null 2>&1; then puts "Python is already installed. Skipping..."; else {
     puts "Installing Python..."
-    apt-get install -y python
+    sudo apt-get install -y python
     puts "Done."
 }; fi
 
 if command -v make > /dev/null 2>&1; then puts "Make is already installed. Skipping..."; else {
     puts "Installing Make..."
-    apt-get install -y make
+    sudo apt-get install -y make
     puts "Done."
 }; fi
 
 if command -v g++ > /dev/null 2>&1; then puts "G++ is already installed. Skipping..."; else {
     puts "Installing G++..."
-    apt-get install -y g++
+    sudo apt-get install -y g++
     puts "Done."
 }; fi
 

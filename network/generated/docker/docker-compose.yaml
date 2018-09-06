@@ -24,7 +24,7 @@ services:
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=coudbauth:5984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdbauth:5984
             # The following setting skips the gossip handshake since we are
             # are not doing mutual TLS
             - CORE_PEER_ENDORSER_ENABLED=true
@@ -49,10 +49,10 @@ services:
             - /var/run/:/host/var/run/
             - ../crypto-config/auth.kunstmaan.be/peers/authpeer.auth.kunstmaan.be/:/etc/hyperledger/crypto-config/peer
         depends_on:
-            - coudbauth
+            - couchdbauth
 
-    coudbauth:
-        container_name: coudbauth
+    couchdbauth:
+        container_name: couchdbauth
         image: hyperledger/fabric-couchdb
         # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
         # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
@@ -84,7 +84,7 @@ services:
             - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
             - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=admin
             - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=password
-            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=coudbkuma:5984
+            - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdbkuma:5984
             # The following setting skips the gossip handshake since we are
             # are not doing mutual TLS
             - CORE_PEER_ENDORSER_ENABLED=true
@@ -110,10 +110,10 @@ services:
             - /var/run/:/host/var/run/
             - ../crypto-config/org.kunstmaan.be/peers/kumapeer.org.kunstmaan.be/:/etc/hyperledger/crypto-config/peer
         depends_on:
-            - coudbkuma
+            - couchdbkuma
 
-    coudbkuma:
-        container_name: coudbkuma
+    couchdbkuma:
+        container_name: couchdbkuma
         image: hyperledger/fabric-couchdb
         # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
         # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.

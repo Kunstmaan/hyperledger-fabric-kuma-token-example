@@ -61,7 +61,7 @@ mark_waiting() {
     local txt
     txt=$(printf '.%.0s' $(eval "echo {1.."$(($N))"}"))$(printf ' %.0s' $(eval "echo {1.."$(($pad))"}"))
 
-    if [ ! -z $WAITING_TEXT ]; then
+    if [ ! -z "$WAITING_TEXT" ]; then
         err "Error, the waiting text is not empty, meaning a done has been forgotten, or two mark_waiting are consecutive"
         abort
     fi

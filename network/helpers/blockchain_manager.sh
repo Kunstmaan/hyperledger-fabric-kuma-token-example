@@ -5,14 +5,6 @@ if [ ! -z $VERBOSE ] && [ $VERBOSE -ge 2 ]; then
     set -x
 fi
 
-
-INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# shellcheck source=/dev/null
-source $INSTALL_DIR/display_utils.sh
-# shellcheck source=/dev/null
-source $INSTALL_DIR/chaincode_utils.sh
-
 usage() {
     err "Usage: $(basename "$0") command [options]"
     err "commands:"
@@ -22,11 +14,14 @@ usage() {
     err "       -e|--erase erases the blockchain and restarts it. LOSS OF DATA WILL OCCUR."
     err "       -r|--restore <path to archive> reloads the blockchain from the archive."
     err "         Will erase any running blockchain. LOSS OF DATA MAY OCCUR for any currently running blockchain."
+    err "       -w|--watch enable watch mode on the chaincodes"
+    err "       -d|--dynamic when watch mode is enabled, automatically updates chaincodes on file changes"
     err "   * stop: stops the blockchain, can be restarted later with start command without loss of data"
     err "       -e|--erase erases the blockchain. LOSS OF DATA WILL OCCUR."
     err "   * archive: archives the blockchain into a zip file. Can be restored with start --restore <path to archive>"
     err "       -o|--output <folder to the archive> sets where the archive must be saved. The archive name will be blockchain_version_timestamp.tar"
     err "   * update: installs/upgrades/instantiates the chaincodes"
+    err "   * -h on any command displays this help"
     abort
 }
 
@@ -37,11 +32,6 @@ fi
 
 COMMAND=$1
 shift
-
-CHANNEL_FOLDER="$INSTALL_DIR/../generated/channel"
-DOCKER_COMPOSE_FILE="$INSTALL_DIR/../generated/docker/docker-compose.yaml"
-CHAINCODES_DIR="../../chaincode/src/chaincodes/"
-BUILD_DIR="../build/"
 
 # Add docker-compose to the path
 export PATH=$PATH:/usr/local/bin
@@ -70,6 +60,20 @@ while :; do
                 abort
             fi
         ;;
+        -w|--watch)
+            set -a
+            # Every variable set must be exported,
+            # This is because the watch command is executed in a subshell
+            WATCH_FLAG="SET"
+        ;;
+        -d|--dynamic)
+            WATCH_DYNAMIC_FLAG="SET"
+        ;;
+        -h|--help)
+            INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+            source $INSTALL_DIR/display_utils.sh
+            usage
+        ;;
         *)
             if [ ! -z $1 ]; then
                 err "Unknown option $1"
@@ -80,6 +84,69 @@ while :; do
     shift
 done
 
+
+INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# shellcheck source=/dev/null
+source $INSTALL_DIR/display_utils.sh
+# shellcheck source=/dev/null
+source $INSTALL_DIR/chaincode_utils.sh
+source $INSTALL_DIR/.env
+
+realpath() {
+  OURPWD=$PWD
+  cd "$(dirname "$1")" || exit 1
+  LINK=$(readlink "$(basename "$1")")
+  while [ "$LINK" ]; do
+    cd "$(dirname "$LINK")" || exit 1
+    LINK=$(readlink "$(basename "$1")")
+  done
+  REALPATH="$PWD/$(basename "$1")"
+  cd "$OURPWD" || exit 1
+  echo "$REALPATH"
+}
+
+CHAINCODES_DIR="$(realpath $CHAINCODES_DIR)"
+export CHAINCODES_DIR
+BUILD_DIR="$(realpath $BUILD_DIR)"
+export BUILD_DIR
+
+getMachine() {
+    unameOut="$(uname -s)"
+    case "${unameOut}" in
+        Linux*)     machine=Linux;;
+        Darwin*)    machine=Mac;;
+        CYGWIN*)    machine=Cygwin;;
+        MINGW*)     machine=MinGw;;
+        *)          machine="UNKNOWN:${unameOut}"
+    esac
+    echo "$machine"
+}
+
+checkIfFsWatchIsInstalled() {
+    if ! command -v fswatch > /dev/null 2>&1; then {
+        echo "Installing fswatch..."
+        if [ "$(getMachine)" == "Mac" ]; then
+            if ! command -v brew > /dev/null 2>&1; then
+                >&2 echo "Please install brew and try again"
+                >&2 echo "Aborting..."
+                exit 1
+            fi
+            brew install fswatch
+        elif [ "$(getMachine)" == "Linux" ]; then
+            sudo add-apt-repository ppa:hadret/fswatch
+            sudo apt-get update
+            sudo apt-get install -y fswatch
+        else
+            >&2 echo "Sorry, $(getMachine) is not supported."
+            >&2 echo "Could not install fswatch"
+            >&2 echo "Aborting..."
+            exit 1
+        fi
+        echo "Done."
+    }; fi
+}
+
 create_chaincode_json() {
     CPWD=$(pwd)
 
@@ -88,28 +155,145 @@ create_chaincode_json() {
     cd $CPWD || ( echo "Could not cd into $CPWD"; exit 1 )
 }
 
-build_chaincodes() {
-    mkdir -p "$BUILD_DIR"
-    # Replace symlinks and move everything to the build folder
-    rsync -ra -L -delete "$CHAINCODES_DIR" "$BUILD_DIR"
+containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
 
-    create_chaincode_json
+watch_chaincodes() {
+    if [ ! -z "$WATCH_DYNAMIC_FLAG" ]; then
+        checkIfFsWatchIsInstalled
+    fi
+
+    process_file_update() {
+        # Anything running here runs in a subshell
+        full_file_path=$1
+        modified_file=${full_file_path#"$CHAINCODES_DIR/"}
+        chaincode_name=$(echo $modified_file | cut -d"/" -f1)
+        chaincode_folder=$CHAINCODES_DIR/$chaincode_name
+        if [ ! -d $chaincode_folder ]; then
+            # chaincode folder is not a folder, but in fact just a file
+            return
+        fi
+        update_chaincodes "$chaincode_name"
+    }
+    export -f process_file_update
+
+    update_chaincodes # install chaincodes for the first time.
+    while true; do
+        if [ ! -z "$WATCH_DYNAMIC_FLAG" ]; then
+            echo "Watching for file changes..."
+            # Process 1 event at a time
+            fswatch -L -1 $CHAINCODES_DIR -e ".*" -i "\\.js$" | xargs -n 1 -P 10 -I {}  bash -c 'process_file_update "$@"' _ {}
+        else
+            # Use the menu
+            chaincodes=( $(cd $CHAINCODES_DIR && echo $(ls -1 -d */ | tr '/' ' ' | while read chaincode ; do echo "$chaincode" ; done | tr '\n' ' ' | sed 's/, $//')) "exit" )
+            PS3='Please enter which chaincode to upgrade: '
+            select chaincode_name in "${chaincodes[@]}"
+            do
+                if containsElement "$chaincode_name" "${chaincodes[@]}"; then
+                    if [ "$chaincode_name" == "exit" ]; then abort; fi
+                    update_chaincodes "$chaincode_name"
+                else
+                    echo "Invalid choice"
+                fi
+            done
+        fi
+    done
+}
+
+bump_version() {
+    local VERSION=$1
+    VERSION=$(echo $VERSION | rev | cut -d'.' -f2- | rev).$(( $(echo $VERSION | rev | cut -d'.' -f1 | rev) +1 ))
+    echo "$VERSION"
+}
+
+get_version_from_package() {
+    local CHAINCODE_PACKAGE_JSON="$1"
+    local VERSION=''
+    if [ -f "$CHAINCODE_PACKAGE_JSON" ]; then
+        # Extract version from package.json
+        VERSION=$(grep -o '\"version\":[^,]*' $CHAINCODE_PACKAGE_JSON | cut -d":" -f2 | cut -d'"' -f2)
+    fi
+    echo "$VERSION"
+}
+
+write_version_in_package() {
+    local VERSION="$1"
+    local CHAINCODE_PACKAGE_JSON="$2"
+
+    if [ -z "$VERSION" ]; then
+        err "Ooops... The new version for $CHAINCODE_PACKAGE_JSON is empty, that should not happen"
+        abort
+    fi
+
+    # Replace the version inside of the file
+    if [ "$(getMachine)" == "Mac" ]; then
+        sed -i '' -e "s#\(\"version.*\"\).*\"#\1$VERSION\"#" $CHAINCODE_PACKAGE_JSON
+    else
+        sed -i -e "s#\(\"version.*\"\).*\"#\1$VERSION\"#" $CHAINCODE_PACKAGE_JSON
+    fi
+}
+
+build_chaincode() {
+    local chaincode_name="$1"
+    local bump="$2"
+    local CHAINCODE_PACKAGE_JSON="$BUILD_DIR/$chaincode_name/package.json"
+    # Save the package version currently saved in the BUILD_DIR, if any
+    local VERSION
+    VERSION=$(get_version_from_package "$CHAINCODE_PACKAGE_JSON")
+
+    # Replace symlinks and move everything to the build folder
+    rsync -ra -L -delete $chaincode_name $BUILD_DIR
+
+    # Merge the dependencies of the package.json with the ones from common
+    $INSTALL_DIR/merge_deps.py $CHAINCODE_PACKAGE_JSON $BUILD_DIR/$chaincode_name/common/package.json;
+
+    # For watch mode only
+    if [ ! -z "$WATCH_FLAG" ] && [ ! -z "$VERSION" ]; then
+        if [ ! -z "$bump" ]; then
+            # bump the version
+            VERSION=$(bump_version $VERSION)
+            echo "Upgrading $chaincode_name to version $VERSION"
+        fi
+        write_version_in_package "$VERSION" "$CHAINCODE_PACKAGE_JSON"
+    fi
+}
+
+build_chaincodes() {
+    increase_version_of_chaincode="$1" # Chaincode for which the versin must be icnrease. Watch mode only
+    mkdir -p "$BUILD_DIR"
 
     CPWD=$(pwd)
-    cd $BUILD_DIR
-    ls -1 -d */ | tr '/' ' ' | while read line ; do
-        $INSTALL_DIR/merge_deps.py $BUILD_DIR/$line/package.json $BUILD_DIR/$line/common/package.json;
+    cd $CHAINCODES_DIR
+    # For each chaincode
+    ls -1 -d */ | tr '/' ' ' | while read chaincode_name ; do
+        if [ "$chaincode_name" == "$increase_version_of_chaincode" ]; then
+            build_chaincode "$chaincode_name" "BUMP"
+        else
+            build_chaincode "$chaincode_name" ""
+        fi
     done
     cd $CPWD || ( echo "Could not cd into $CPWD"; exit 1 )
+
+    # Create the chaincode.json containing the names of the chaincodes
+    create_chaincode_json
 
     echo "*" > "$BUILD_DIR/.gitignore"
 }
 
 update_chaincodes() {
-    build_chaincodes
-    create_chaincode_json
+    build_chaincodes $1
 
-    docker exec -it $CLI /etc/hyperledger/chaincode_tools/update_chaincodes.py --build --forceNpmInstall
+    docker exec -t $CLI bash -c '/etc/hyperledger/chaincode_tools/update_chaincodes.py --build --forceNpmInstall' &
+    save_pid "Installing and updating chaincodes"
+    wait
+    echo ""
+    echo ""
+    mark_done "Installing and updating chaincodes"
+    #wait_for_processes_and_display_status
     $INSTALL_DIR/clean_old_dockers.py
 }
 
@@ -173,6 +357,8 @@ stop_blockchain() {
             mark_done
         done
         mark_done_manual_new_line "$erase_text"
+
+        rm -rfd $BUILD_DIR
     else
         mark_waiting "Stopping the blockchain"
         $DRYRUN docker-compose -f $DOCKER_COMPOSE_FILE stop
@@ -204,7 +390,11 @@ start_blockchain() {
         mark_done
     done
 
-    $DRYRUN update_chaincodes
+    if [ ! -z $WATCH_FLAG ]; then
+        $DRYRUN watch_chaincodes
+    else
+        $DRYRUN update_chaincodes
+    fi
 }
 
 restore_archive_hyperledger_container() {

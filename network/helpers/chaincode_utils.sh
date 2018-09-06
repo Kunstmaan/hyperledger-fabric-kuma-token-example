@@ -2,20 +2,10 @@
 
 # You must source display_utils too for this script to work
 
-CONTAINERS=(tools.org.kunstmaan.be kumapeer.org.kunstmaan.be authpeer.auth.kunstmaan.be orderer.org.kunstmaan.be coudbkuma coudbauth)
-PEERS=(kumapeer.org.kunstmaan.be authpeer.auth.kunstmaan.be)
-ORDERERS=(orderer.org.kunstmaan.be)
-CLI='tools.org.kunstmaan.be'
-HLNETWORK='hyperledgerNet'
-CHANNELS=(kumachannel)
+INSTALL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-export CONTAINERS
-export PEERS
-export CHANNELS
-export ORDERERS
-export CLI
-export HLNETWORK
-export CHANNELS
+# shellcheck source=/dev/null
+source $INSTALL_DIR/.env
 
 check_if_container_crashed() {
     docker_container=$1
