@@ -95,17 +95,6 @@ if command -v docker-compose > /dev/null 2>&1; then puts "Docker-compose is alre
     puts "Done."
 }; fi
 
-if command -v node > /dev/null 2>&1; then puts "NodeJs is already installed. Skipping..."; else {
-    puts "Installing NodeJs..."
-    NODE_FILE="node-v$NODEJS_VERSION-linux-x64.tar.gz"
-    wget http://nodejs.org/dist/v$NODEJS_VERSION/$NODE_FILE
-    sudo tar --strip-components 1 -xzvf $NODE_FILE -C /usr/local
-    sudo ln -s /usr/local/bin/node /usr/bin/node
-    sudo ln -s /usr/local/bin/npm /usr/bin/npm
-    rm -rfd $NODE_FILE
-    puts "Done."
-}; fi
-
 if command -v git > /dev/null 2>&1; then puts "Git is already installed. Skipping..."; else {
     puts "Installing Git..."
     sudo apt-get install -y git
@@ -127,6 +116,17 @@ if command -v make > /dev/null 2>&1; then puts "Make is already installed. Skipp
 if command -v g++ > /dev/null 2>&1; then puts "G++ is already installed. Skipping..."; else {
     puts "Installing G++..."
     sudo apt-get install -y g++
+    puts "Done."
+}; fi
+
+sudo apt-get install -y build-essential libssl-dev
+
+if command -v nvm > /dev/null 2>&1; then {
+    puts "Nvm is already installed. Skipping...";
+    nvm install 8.9
+} else {
+    puts "Installing Nvm..."
+    curl https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
     puts "Done."
 }; fi
 

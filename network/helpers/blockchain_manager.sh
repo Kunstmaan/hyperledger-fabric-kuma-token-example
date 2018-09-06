@@ -260,6 +260,8 @@ build_chaincode() {
         fi
         write_version_in_package "$VERSION" "$CHAINCODE_PACKAGE_JSON"
     fi
+
+    npm install --prefix $BUILD_DIR/$chaincode_name
 }
 
 build_chaincodes() {
@@ -558,6 +560,7 @@ elif [ $COMMAND == "start" ]; then
     # Create build folder before docker starts,
     # otherwise docker will set root permissions on the volume
     mkdir -p "$BUILD_DIR"
+    build_chaincodes
     start_blockchain
 elif [ $COMMAND = "update" ]; then
     update_chaincodes
