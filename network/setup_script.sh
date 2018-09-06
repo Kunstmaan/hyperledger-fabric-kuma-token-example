@@ -48,6 +48,11 @@ if [ "$#" -lt 0 ]; then
     abort
 fi
 
+if [ "$(uname)" != 'Linux' ]; then
+    puts "Not running on linux. aborting"
+    abort
+fi
+
 sudo apt-get update
 
 if command -v wget > /dev/null 2>&1; then puts "wget is already installed. Skipping..."; else {
