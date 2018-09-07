@@ -15,7 +15,11 @@ class AbstractWallet {
     */
     static async queryWalletByAddress(txHelper, address) {
         const dbData = await txHelper.getStateAsObject(address);
-
+        if(!dbData) {
+            throw new ChaincodeError(ERRORS.UNKNOWN_ENTITY, {
+                'address': address
+            });
+        }
         return mapDBDataToObject(dbData);
     }
 

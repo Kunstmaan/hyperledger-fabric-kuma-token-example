@@ -1,7 +1,7 @@
 const {baseService} = require('@kunstmaan/hyperledger-fabric-client-utils');
 
 const {
-    KEYSTORE_PATH, CHANNEL_ID, PEER, ORDERER
+    KEYSTORE_PATH, CHANNEL_ID, PEERS, ORDERER
 } = require('./../constants');
 
 module.exports = baseService(
@@ -58,7 +58,7 @@ module.exports = baseService(
     },
     {
         channelId: CHANNEL_ID,
-        peers: [PEER],
+        peers: [PEERS.KUMA_PEER],
         orderer: ORDERER
     }
 );

@@ -4,7 +4,8 @@
   "description": "A CLI application to communicate with the kuma-token chaincode.",
   "main": "cli.js",
   "scripts": {
-    "test": "jest services/ --runInBand"
+    "test": "jest services/ --runInBand",
+    "startServer": "node app.js"
   },
   "author": "Kunstmaan",
   "license": "MIT",
@@ -14,7 +15,9 @@
     "command-exists": "^1.2.2",
     "fabric-shim": "^1.2.0",
     "fs-extra": "^5.0.0",
-    "yargs": "^11.0.0"
+    "yargs": "^11.0.0",
+    "log4js": "^2.3.12",
+    "express": "^4.16.2"
   },
   "devDependencies": {
     "eslint": "^4.12.1",

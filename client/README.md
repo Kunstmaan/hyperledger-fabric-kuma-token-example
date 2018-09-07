@@ -59,7 +59,7 @@ Use this command to create a new x-y multisig contract between users.
 node cli.js multisig-create-contract <users..> --signaturesNeeded x
 ```
 
-By default the number of signatures needed equals the number of users. 
+By default the number of signatures needed equals the number of users.
 
 ## Requesting a multisig transfer
 
@@ -105,3 +105,16 @@ Or run the tests for every service separatly:
 jest services/kuma-token.spec.js
 jest services/multisig.spec.js
 ```
+
+## API server
+
+To run a simple API server in production mode
+```
+NODE_ENV='prod' npm run startServer
+```
+
+There is then an api to call chaincodes available with:
+
+* To invoke: http://localhost:3000/api/chaincode/invoke?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
+
+* To query: http://localhost:3000/api/chaincode/query?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
