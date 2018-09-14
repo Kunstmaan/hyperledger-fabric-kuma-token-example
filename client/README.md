@@ -122,6 +122,10 @@ There is then an api to call chaincodes available with:
 
 * To query: http://localhost:3000/api/chaincode/query?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
 
+Peer is optional, kuma-peer will be used by default
+User is optional, the admin of the peer will be used by default
+The chaincode name comes from the package.json name. The userId must match the ones in `network/generated/hfc-key-store`. The chaincode function is the name of the function as it is in your chaincode, and the peer can be KUMA_PEER or AUTH_PEER, as setup in the network configuration of the backend in `constants/index.js`
+
 # Modifying the code
 ## Modify the chaincode
 To setup a development environment, you can either run the devmode network, or run the blockchain_manager in watch mode. Then modify your chaincode and add a new function. The first two arguments of that function must be stub and txHelper, then add your own arguments if any. Once done, save and upgrade the chaincode. If you're using watch mode, just enter the chaincode that you'd like to upgrade. In the back, this will copy your source code to the build folder, merge the common dependencies with the package.json of the chaincode, replace symlinks with directly the files and increase the version number (you can only upgrade chaincode if the version changed) and run npm install.
