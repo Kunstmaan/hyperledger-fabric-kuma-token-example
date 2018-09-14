@@ -55,6 +55,14 @@ fi
 
 sudo apt-get update
 
+if [ ! -f ~/.ssh/known_hosts ]; then
+    puts "Creating known_hosts file"
+    mkdir -p ~/.ssh/
+    touch ~/.ssh/known_hosts
+    puts "Done"
+fi
+
+
 if command -v wget > /dev/null 2>&1; then puts "wget is already installed. Skipping..."; else {
   puts "Installing wget..."
   sudo apt-get install -y wget
