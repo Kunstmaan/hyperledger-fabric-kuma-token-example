@@ -122,9 +122,7 @@ There is then an api to call chaincodes available with:
 
 * To query: http://localhost:3000/api/chaincode/query?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
 
-Peer is optional, kuma-peer will be used by default
-User is optional, the admin of the peer will be used by default
-The chaincode name comes from the package.json name. The userId must match the ones in `network/generated/hfc-key-store`. The chaincode function is the name of the function as it is in your chaincode, and the peer can be KUMA_PEER or AUTH_PEER, as setup in the network configuration of the backend in `constants/index.js`
+Peer is optional, kuma-peer will be used by default. User is optional, the admin of the peer will be used by default. The chaincode name comes from the package.json name. The userId must match the ones in `network/generated/hfc-key-store`. The chaincode function is the name of the function as it is in your chaincode, and the peer can be KUMA_PEER or AUTH_PEER, as setup in the network configuration of the backend in `constants/index.js`
 
 # Modifying the code
 ## Modify the chaincode
