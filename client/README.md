@@ -48,7 +48,7 @@ node cli.js transfer <amount> <to> [from]
 ```
 
 * `amount` is the amount of tokens to transfer
-* `to` is the wallet addres where you want to send the tokens to
+* `to` is the wallet address where you want to send the tokens to
 * `from` can be used to define the wallet address where the tokens should be send from. By default the wallet of the current user is used `--user <name>`
 
 ## Creating a multisig contract
@@ -70,7 +70,7 @@ node cli.js multisig-request-transfer <amount> <from> <to>
 ```
 
 * `amount` is the amount of tokens to transfer
-* `to` is the wallet addres where you want to send the tokens to
+* `to` is the wallet address where you want to send the tokens to
 * `from` is either the wallet address or the multisig contract id where the tokens should be send from
 
 ## Get info of a multisig transfer request
@@ -99,7 +99,7 @@ There are end-to-end tests written for both services [kuma-token](./services/kum
 jest services
 ```
 
-Or run the tests for every service separatly:
+Or run the tests for every service separately:
 
 ```
 jest services/kuma-token.spec.js
