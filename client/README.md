@@ -8,6 +8,9 @@ With the following command you can get an overview of all the commands available
 node cli.js -h
 ```
 
+## Setting up the environment
+By default, all commands use the dev mode, which uses a simpler architecture and different docker container names for the peers and chaincodes. If you started the network with the blockchain_manager.sh, then you are using a network which more ressembles a production network, with all the peers and orderers running (prod network). The prod network uses TLS authentication, which requires you to modify your /etc/hosts file to resolve the host names to your localhost (or in production, nodes could run on different physical machines, in which case they would resolve to the IPs of these machines). By default, all below commands are connecting to the dev network. If you'd like to use the prod network you must prepend `NODE_ENV='prod'` to each command, or run `export NODE_ENV='prod'` to let the commands know you want to connect to the prod network.
+
 ## Pinging the chaincode
 
 This is a simple command that can be used to see if the chaincode is available.
@@ -59,7 +62,7 @@ Use this command to create a new x-y multisig contract between users.
 node cli.js multisig-create-contract <users..> --signaturesNeeded x
 ```
 
-By default the number of signatures needed equals the number of users. 
+By default the number of signatures needed equals the number of users.
 
 ## Requesting a multisig transfer
 
@@ -105,3 +108,35 @@ Or run the tests for every service separately:
 jest services/kuma-token.spec.js
 jest services/multisig.spec.js
 ```
+
+## API server
+
+To run a simple API server in production mode
+```
+NODE_ENV='prod' npm run startServer
+```
+
+There is then an api to call chaincodes available with:
+
+* To invoke: http://localhost:3000/api/chaincode/invoke?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
+
+* To query: http://localhost:3000/api/chaincode/query?chaincodeId=CHAINCODE_NAME&chaincodeFunction=CHAINCODE_FUNCTION&userId=USER_ID&chaincodeArg=CHAINCODE_ARG_1&chaincodeArg=CHAINCODE_ARG_2&PEER=PEER_NAME
+
+Peer is optional, kuma-peer will be used by default. User is optional, the admin of the peer will be used by default. The chaincode name comes from the package.json name. The userId must match the ones in `network/generated/hfc-key-store`. The chaincode function is the name of the function as it is in your chaincode, and the peer can be KUMA_PEER or AUTH_PEER, as setup in the network configuration of the backend in `constants/index.js`
+
+# Modifying the code
+## Modify the chaincode
+To setup a development environment, you can either run the devmode network, or run the blockchain_manager in watch mode. Then modify your chaincode and add a new function. The first two arguments of that function must be stub and txHelper, then add your own arguments if any. Once done, save and upgrade the chaincode. If you're using watch mode, just enter the chaincode that you'd like to upgrade. In the back, this will copy your source code to the build folder, merge the common dependencies with the package.json of the chaincode, replace symlinks with directly the files and increase the version number (you can only upgrade chaincode if the version changed) and run npm install.
+
+You now have the latest chaincode running on your blockchain.
+## Modify the backend
+Add your new function to the services/chaincodeName.js. Decide if it should be an invoke or a query, and you can now use it in your backend logic. For an example on how the backend uses this service, look in the .spec test files.
+
+You can also directly use this new function with the server generic API without changing any backend code.
+
+# FAQ
+* I have a CHANNEL NOT FOUND error:
+    This is probably because you started the network previously, which created a channel block. It then stopped for some reason, and you are now starting a new network with the `blockchain_manager.sh` script. The network you started will reuse the previously created channel block, from the previous network. The setup script is going to see that this block is already present, and think the channel was created (this feature is useful if you are backing up files and restarting the blockchain to keep previous data). To fix this, just delete the channel.block in `network/generated/channel` or run `blockchain_manager.sh stop --erase` to cleanup your machine before running `blockchain_manager.sh start` command again.
+
+
+

@@ -27,21 +27,11 @@ set_peer_env(){
 # path to the folder which contains the channel tx and blocks, relative to working dir of tools container
 CONFIGTX_PATH=/etc/hyperledger/configtx
 
-install_ping(){
-  if ping > /dev/null 2>&1; then puts "Ping is already installed. Skipping..."; else {
-    puts "Installing Ping..."
-    sudo apt-get update
-    sudo apt-get install -y iputils-ping
-    puts "Done."
-  }; fi
-}
-
-install_ping
-
 # Waits for a peer to answer to ping
 wait_for_host(){
   HOST_TO_TEST=$1
-  until ping -c1 $HOST_TO_TEST &>/dev/null; do puts "Waiting for host $HOST_TO_TEST to come online..."; sleep 3; done
+
+  until [[ "$(curl $HOST_TO_TEST 2> /dev/null; echo $?)" != 6 ]]; do puts "Waiting for host $HOST_TO_TEST to come online..."; sleep 3; done
   puts "Host $HOST_TO_TEST is online !"
 }
 
@@ -55,14 +45,20 @@ create_channel(){
   # The orderer ca does not have to be combined, it can just be its tls cert
   # Does not seem like one has to specify the cafile nor the orderer, seems like the peer finds them by itself
   ORDERER_CA="/etc/hyperledger/crypto-config/$ORDERER_ORG/orderers/$ORDERER.$ORDERER_ORG/tlsca.combined.$ORDERER.$ORDERER_ORG-cert.pem"
-  puts "Creating channel block for $CHANNEL_ID..."
   set_peer_env $PEER $PEER_ORG
-  peer channel create --cafile $ORDERER_CA -c $CHANNEL_ID -f $CONFIGTX_PATH/$CHANNEL_ID.tx -o $ORDERER.$ORDERER_ORG:7050 --tls true
-  if [ ! -f "$CONFIGTX_PATH/$CHANNEL_ID.block" ]
-  then
-      mv $CHANNEL_ID.block $CONFIGTX_PATH
+
+  if ! peer channel list | grep -q -e "^$CHANNEL_ID$"; then
+      if [ ! -f "$CONFIGTX_PATH/$CHANNEL_ID.block" ]; then
+          puts "Creating channel block for $CHANNEL_ID..."
+          peer channel create --cafile $ORDERER_CA -c $CHANNEL_ID -f $CONFIGTX_PATH/$CHANNEL_ID.tx -o $ORDERER.$ORDERER_ORG:7050 --tls true
+          mv $CHANNEL_ID.block $CONFIGTX_PATH
+          puts "Done. Created $CHANNEL_ID.block"
+      else
+          puts "Channel block $CHANNEL_ID already created"'!'
+      fi
+  else
+      puts "Channel $CHANNEL_ID already exists."
   fi
-  puts "Done. Created $CHANNEL_ID.block"
 }
 
 join_channel(){
